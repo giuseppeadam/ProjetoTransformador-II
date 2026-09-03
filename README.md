@@ -1,21 +1,5 @@
 # ProjetoTransformador
 
-## Parte 2 — Federated Learning (Flower)
-
-Continuação do projeto: a "parte 1" (`dataset.ipynb`) treinou modelos clássicos
-(Bagging, Gradient Boosting, Decision Tree, Random Forest, SVM, KNN, Voting)
-sobre o dataset de vício digital. A "parte 2", em `fl_addiction/`, simula
-múltiplas **instituições/clientes** treinando localmente sobre pedaços do
-mesmo dataset, usando **Federated Learning** com o framework **Flower (flwr)**.
-
-### Por que trocar de modelo?
-
-Federated Learning agrega os clientes fazendo alguma operação sobre os
-**pesos** do modelo a cada round. Bagging/Gradient Boosting/Decision Tree não
-têm um vetor de pesos contínuo pra promediar (são conjuntos de árvores) — por
-isso o modelo virou uma **rede neural simples (MLP)** em PyTorch, que expõe
-pesos (`nn.Linear`) prontos para essa agregação.
-
 ### Glossário rápido
 
 - **Cliente (ClientApp)**: representa uma instituição. Recebe os pesos
