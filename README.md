@@ -1,6 +1,6 @@
 # ProjetoTransformador
 
-### Glossário rápido
+
 
 - **Cliente (ClientApp)**: representa uma instituição. Recebe os pesos
   globais, treina localmente por algumas épocas na sua própria partição de
