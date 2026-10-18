@@ -22,6 +22,24 @@ independente dela e usa o dataset de produtividade em `archive/`.
 
 ---
 
+## Glossário
+
+- **Cliente (ClientApp)**: representa uma instituição. Recebe os pesos globais,
+  treina localmente por algumas épocas na sua própria partição de dados, e
+  devolve os pesos atualizados, sem nunca enviar os dados.
+- **Servidor (ServerApp)**: coordena os rounds e agrega os pesos recebidos de
+  todos os clientes num novo modelo global, usando uma **estratégia**.
+- **Round**: um ciclo completo de enviar pesos → treinar localmente → agregar.
+  É a unidade de comunicação do Federated Learning, e o recurso caro: cada round
+  exige uma troca de pesos com todas as instituições.
+- **Estratégia**: a regra de agregação aplicada pelo servidor sobre os pesos
+  recebidos. É o que este benchmark compara — ver
+  [As cinco estratégias](#as-cinco-estratégias).
+- **Partição IID / non-IID**: como os dados são divididos entre as instituições.
+  No regime IID todas recebem distribuições semelhantes; no non-IID algumas
+  concentram certas classes, o que faz os modelos locais divergirem entre si —
+  o fenômeno chamado *client drift*.
+
 ## Estrutura do repositório
 
 ```
@@ -450,11 +468,15 @@ protegê-lo. O comportamento é esperado e está registrado em
 
 ### Scaffold
 
-Citado em aula e **não implementado**. O método corrige o *client drift* com
-*control variates*, o que exige estado adicional mantido por cliente entre
-rounds e mudanças na lógica do cliente, não apenas na agregação do servidor. Não
-é uma estratégia nativa do Flower, e implementá-la é um trabalho de natureza
-diferente de selecionar as cinco acima.
+Corrige o *client drift* causado por dados heterogêneos, usando *control
+variates* — uma estimativa, mantida por cliente, da direção em que seu gradiente
+local se desvia do global.
+
+Citado em aula e **não implementado** aqui. Não é uma estratégia nativa do
+Flower, e adicioná-la não se resume a escrever um arquivo em `strategies/`: as
+*control variates* exigem estado por cliente persistido entre rounds e mudanças
+na lógica do cliente, não apenas na agregação do servidor. É um trabalho de
+natureza diferente de selecionar as cinco acima, e fica como próximo passo.
 
 ---
 
