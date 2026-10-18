@@ -1,0 +1,321 @@
+Flower App configuration warnings in 'C:\Users\Giuseppe\estudo\proj-transf\ProjetoTransformador-II\fl_benchmark\pyproject.toml':
+- Recommended property "license" missing in [project]
+Using SuperLink: local-simulation (127.0.0.1:39093)
+⚠️ Warning: `options.` fields in the SuperLink connection configuration are deprecated. Use `--federation-config` with `flwr run` instead. Alternatively, permanently set your simulation configuration via `flwr federation simulation-config`.
+⚠️ Warning: `--federation-config` was provided, so deprecated `options.` entries from the SuperLink connection in your Flower configuration will be ignored.
+Successfully started run 10334340617278888690
+[92mINFO [0m:      Starting logstream for run_id `10334340617278888690`
+[92mINFO [0m:      Starting Flower Simulation
+[93mWARNING [0m:   Since flwr 1.32, default simulated SuperNodes changed from 10 to 2.
+[92mINFO [0m:      Federation `@none/default` (5 simulated SuperNodes)
+[92mINFO [0m:      To change federation size, use the following command:
+[92mINFO [0m:      	flwr federation simulation-config @none/default <superlink> --num-supernodes <N>
+[32m[1mSuccessfully installed fl-benchmark to C:\Users\Giuseppe\.flwr\apps\pepe.fl-benchmark.1.0.0.445eb618.[0m
+[93mWARNING [0m:   Skipping `flwr` dependency from app requirements to avoid replacing the running Flower installation.
+[92mINFO [0m:      Created env for run in: C:\Users\Giuseppe\.flwr\runtime-envs\10334340617278888690
+[92mINFO [0m:      Installing application dependencies...
+[92mINFO [0m:      Installed: [alembic==1.20.0, annotated-doc==0.0.5, annotated-types==0.8.0, anyio==4.15.1, attrs==26.1.0, certifi==2026.10.18, cffi==2.1.1, charset-normalizer==3.5.2, click==8.5.0, cloudpickle==3.1.2, colorama==0.4.6, cryptography==50.0.2, fastapi==0.138.2, filelock==4.2.2, fsspec==2026.9.0, greenlet==3.5.6, grpcio-health-checking==1.81.1, grpcio==1.84.0, h11==0.16.0, httpcore==1.0.9, httptools==0.9.0, httpx==0.28.1, idna==3.20, iterators==0.0.2, jinja2==3.1.6, joblib==1.6.0, jsonschema-specifications==2025.9.1, jsonschema==4.26.0, mako==1.4.3, markdown-it-py==4.2.0, markupsafe==3.0.4, mdurl==0.1.2, mpmath==1.3.0, msgpack==1.2.3, narwhals==2.27.1, networkx==3.7, numpy==2.5.4, packaging==25.0, pandas==3.0.6, pathspec==1.1.1, prompt-toolkit==3.0.53, protobuf==6.33.6, pycparser==3.11, pycryptodome==3.24.1, pydantic-core==2.50.1, pydantic==2.14.1, pygments==2.21.0, python-dateutil==2.9.0.post0, python-dotenv==1.2.4, pyyaml==6.0.3, ray==2.55.1, referencing==0.37.0, requests==2.34.2, rich==14.3.4, rpds-py==2026.9.1, scikit-learn==1.9.1, scipy==1.18.1, setuptools==84.0.0, shellingham==1.5.4, six==1.17.0, sqlalchemy==2.1.5, starlette==1.3.1, sympy==1.14.0, threadpoolctl==3.7.0, tomli-w==1.2.0, tomli==2.5.0, torch==2.14.1, typer==0.20.1, typing-extensions==4.16.0, typing-inspection==0.4.4, tzdata==2026.5, urllib3==2.8.0, uv==0.12.24, uvicorn==0.49.0, watchfiles==1.3.0, wcwidth==0.9.2, websockets==17.2]
+[92mINFO [0m:      App dependencies installed successfully via uv sync.
+
+>>> estrategia: FedYogi | particao: iid | device: cpu
+
+[92mINFO [0m:      Starting FedYogi strategy:
+[92mINFO [0m:      	├── Number of rounds: 10
+[92mINFO [0m:      	├── ArrayRecord (0.00 MB)
+[92mINFO [0m:      	├── ConfigRecord (train): {'lr': 0.01}
+[92mINFO [0m:      	├── ConfigRecord (evaluate): (empty!)
+[92mINFO [0m:      	├──> FedOpt settings:
+[92mINFO [0m:      	│	├── eta (0.1) | eta_l (0.1)
+[92mINFO [0m:      	│	├── beta_1 (0.9) | beta_2 (0.99)
+[92mINFO [0m:      	│	└── tau (1e-09)
+[92mINFO [0m:      	├──> Sampling:
+[92mINFO [0m:      	│	├──Fraction: train (1.00) | evaluate ( 1.00)
+[92mINFO [0m:      	│	├──Minimum nodes: train (5) | evaluate (5)
+[92mINFO [0m:      	│	└──Minimum available nodes: 5
+[92mINFO [0m:      	└──> Keys in records:
+[92mINFO [0m:      		├── Weighted by: 'num-examples'
+[92mINFO [0m:      		├── ArrayRecord key: 'arrays'
+[92mINFO [0m:      		└── ConfigRecord key: 'config'
+[92mINFO [0m:      
+[92mINFO [0m:      Initial global evaluation results: {'accuracy': 0.5655, 'f1': 0.6845735027223231, 'auc': 0.6781311250000001, 'loss': 0.6844697303771973}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 1/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+C:\Users\Giuseppe\.flwr\runtime-envs\10334340617278888690\Lib\site-packages\ray\_private\worker.py:2051: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+[33m(raylet)[0m Stack (most recent call first):
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\10334340617278888690\Lib\site-packages\ray\_private\worker.py", line 628 in job_logging_config
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\10334340617278888690\Lib\site-packages\ray\_private\worker.py", line 2801 in disconnect
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\10334340617278888690\Lib\site-packages\ray\_private\worker.py", line 2132 in shutdown
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\10334340617278888690\Lib\site-packages\ray\_private\worker.py", line 1143 in wrapper
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\10334340617278888690\Lib\site-packages\ray\_private\client_mode_hook.py"Windows fatal exception: , line access violation107
+[33m(raylet)[0m 
+[33m(raylet)[0m  in wrapper
+[36m(pid=25620)[0m 2026-10-18 15:52:29.683593: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+[33m(raylet)[0m Stack (most recent call first):[32m [repeated 11x across cluster] (Ray deduplicates logs by default. Set RAY_DEDUP_LOGS=0 to disable log deduplication, or see https://docs.ray.io/en/master/ray-observability/user-guides/configure-logging.html#log-deduplication for more options.)[0m
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\10334340617278888690\Lib\site-packages\ray\_private\worker.py", line 628 in job_logging_config[32m [repeated 11x across cluster][0m
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\10334340617278888690\Lib\site-packages\ray\_private\worker.py", line 2801 in disconnect[32m [repeated 11x across cluster][0m
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\10334340617278888690\Lib\site-packages\ray\_private\worker.py", line 2132 in shutdown[32m [repeated 11x across cluster][0m
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\10334340617278888690\Lib\site-packages\ray\_private\client_mode_hook.py", line 107 in wrapper[32m [repeated 22x across cluster][0m
+[36m(pid=24040)[0m 2026-10-18 15:52:36.194054: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.[32m [repeated 6x across cluster][0m
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'train_loss': 0.10637919749224238, 'train_time_s': 2.195654300012393, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.8871875, 'auc': 0.9692156956675895, 'f1': 0.8794000094832235, 'loss': 0.3800350272655487, 'accuracy_std': 0.00535825881233819, 'accuracy_min': 0.8828125, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.89625, 'f1': 0.8902987047316944, 'auc': 0.9710789999999999, 'loss': 0.3769297800064087}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 2/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'train_loss': 0.06983561488258905, 'train_time_s': 2.4204500000341795, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.900625, 'auc': 0.9729437460953535, 'f1': 0.8961222430363813, 'loss': 0.27946865677833554, 'accuracy_std': 0.006373774391990965, 'accuracy_min': 0.89375, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.904, 'f1': 0.9004149377593361, 'auc': 0.9730715000000001, 'loss': 0.2805483226776123}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 3/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'train_loss': 0.05861106250450272, 'train_time_s': 2.492406600009417, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.908125, 'auc': 0.9779948510917593, 'f1': 0.9057283049292499, 'loss': 0.5578129673004151, 'accuracy_std': 0.009752804083954533, 'accuracy_min': 0.8890625, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.9105, 'f1': 0.9084867075664622, 'auc': 0.977461125, 'loss': 0.5690819072723389}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 4/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'train_loss': 0.05552620597100031, 'train_time_s': 2.39271970000118, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.92375, 'auc': 0.9824739611516813, 'f1': 0.923069120083515, 'loss': 0.7332479274272918, 'accuracy_std': 0.008580956386091236, 'accuracy_min': 0.909375, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.92275, 'f1': 0.9223422970595627, 'auc': 0.9808967499999999, 'loss': 0.7204526710510254}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 5/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'train_loss': 0.05614690753648949, 'train_time_s': 2.5636972000065725, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.9403125, 'auc': 0.9836573511325714, 'f1': 0.9402695331181501, 'loss': 0.6734556090831757, 'accuracy_std': 0.012279301690242809, 'accuracy_min': 0.9203125, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.9365, 'f1': 0.9365, 'auc': 0.9845363749999999, 'loss': 0.6210367622375488}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 6/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'train_loss': 0.045542369651716735, 'train_time_s': 2.31921409998904, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.954375, 'auc': 0.9898609211592642, 'f1': 0.9544385201279018, 'loss': 0.42671430557966233, 'accuracy_std': 0.013528038013695854, 'accuracy_min': 0.9296875, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.9535, 'f1': 0.9539147670961348, 'auc': 0.9914845, 'loss': 0.35444075107574463}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 7/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'train_loss': 0.03418674668523964, 'train_time_s': 2.437650300009409, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.9696875, 'auc': 0.9964826658136474, 'f1': 0.9699494164337105, 'loss': 0.16716447949409485, 'accuracy_std': 0.010345590848279265, 'accuracy_min': 0.953125, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.97075, 'f1': 0.9710324337707353, 'auc': 0.9962018750000001, 'loss': 0.14769642448425294}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 8/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'train_loss': 0.03142659698671431, 'train_time_s': 2.5039854999631643, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.9834375, 'auc': 0.9991615496958209, 'f1': 0.9834943371897161, 'loss': 0.04180161878466606, 'accuracy_std': 0.005096720759468773, 'accuracy_min': 0.978125, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.9815, 'f1': 0.9816285998013903, 'auc': 0.99906375, 'loss': 0.046921006321907044}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 9/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'train_loss': 0.027373964843729105, 'train_time_s': 2.4754656999430154, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.9859375, 'auc': 0.9993403866134731, 'f1': 0.9858364454219222, 'loss': 0.03352809876203537, 'accuracy_std': 0.003277527650531717, 'accuracy_min': 0.9828125, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.98425, 'f1': 0.9842775143498877, 'auc': 0.9992672499999999, 'loss': 0.03689082312583923}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 10/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'train_loss': 0.02636068339247047, 'train_time_s': 2.4972805000143126, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.9784375, 'auc': 0.9987414807251335, 'f1': 0.9782803019145675, 'loss': 0.048064235448837284, 'accuracy_std': 0.003878023014372119, 'accuracy_min': 0.971875, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.9785, 'f1': 0.9785749875435974, 'auc': 0.998668, 'loss': 0.053722907543182374}
+[92mINFO [0m:      
+[92mINFO [0m:      Strategy execution finished in 79.56s
+[92mINFO [0m:      
+[92mINFO [0m:      Final results:
+[92mINFO [0m:      
+[92mINFO [0m:      	Global Arrays:
+[92mINFO [0m:      		ArrayRecord (0.005 MB)
+[92mINFO [0m:      	
+[92mINFO [0m:      	Aggregated ClientApp-side Train Metrics:
+[92mINFO [0m:      	{ 1: { 'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '1.0638e-01',
+[92mINFO [0m:      	       'train_time_s': '2.1957e+00'},
+[92mINFO [0m:      	  2: { 'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '6.9836e-02',
+[92mINFO [0m:      	       'train_time_s': '2.4205e+00'},
+[92mINFO [0m:      	  3: { 'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '5.8611e-02',
+[92mINFO [0m:      	       'train_time_s': '2.4924e+00'},
+[92mINFO [0m:      	  4: { 'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '5.5526e-02',
+[92mINFO [0m:      	       'train_time_s': '2.3927e+00'},
+[92mINFO [0m:      	  5: { 'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '5.6147e-02',
+[92mINFO [0m:      	       'train_time_s': '2.5637e+00'},
+[92mINFO [0m:      	  6: { 'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '4.5542e-02',
+[92mINFO [0m:      	       'train_time_s': '2.3192e+00'},
+[92mINFO [0m:      	  7: { 'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '3.4187e-02',
+[92mINFO [0m:      	       'train_time_s': '2.4377e+00'},
+[92mINFO [0m:      	  8: { 'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '3.1427e-02',
+[92mINFO [0m:      	       'train_time_s': '2.5040e+00'},
+[92mINFO [0m:      	  9: { 'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '2.7374e-02',
+[92mINFO [0m:      	       'train_time_s': '2.4755e+00'},
+[92mINFO [0m:      	  10: { 'num_clients': '5.0000e+00',
+[92mINFO [0m:      	        'train_loss': '2.6361e-02',
+[92mINFO [0m:      	        'train_time_s': '2.4973e+00'}}
+[92mINFO [0m:      	
+[92mINFO [0m:      	Aggregated ClientApp-side Evaluate Metrics:
+[92mINFO [0m:      	{ 1: { 'accuracy': '8.8719e-01',
+[92mINFO [0m:      	       'accuracy_min': '8.8281e-01',
+[92mINFO [0m:      	       'accuracy_std': '5.3583e-03',
+[92mINFO [0m:      	       'auc': '9.6922e-01',
+[92mINFO [0m:      	       'f1': '8.7940e-01',
+[92mINFO [0m:      	       'loss': '3.8004e-01',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  2: { 'accuracy': '9.0063e-01',
+[92mINFO [0m:      	       'accuracy_min': '8.9375e-01',
+[92mINFO [0m:      	       'accuracy_std': '6.3738e-03',
+[92mINFO [0m:      	       'auc': '9.7294e-01',
+[92mINFO [0m:      	       'f1': '8.9612e-01',
+[92mINFO [0m:      	       'loss': '2.7947e-01',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  3: { 'accuracy': '9.0812e-01',
+[92mINFO [0m:      	       'accuracy_min': '8.8906e-01',
+[92mINFO [0m:      	       'accuracy_std': '9.7528e-03',
+[92mINFO [0m:      	       'auc': '9.7799e-01',
+[92mINFO [0m:      	       'f1': '9.0573e-01',
+[92mINFO [0m:      	       'loss': '5.5781e-01',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  4: { 'accuracy': '9.2375e-01',
+[92mINFO [0m:      	       'accuracy_min': '9.0938e-01',
+[92mINFO [0m:      	       'accuracy_std': '8.5810e-03',
+[92mINFO [0m:      	       'auc': '9.8247e-01',
+[92mINFO [0m:      	       'f1': '9.2307e-01',
+[92mINFO [0m:      	       'loss': '7.3325e-01',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  5: { 'accuracy': '9.4031e-01',
+[92mINFO [0m:      	       'accuracy_min': '9.2031e-01',
+[92mINFO [0m:      	       'accuracy_std': '1.2279e-02',
+[92mINFO [0m:      	       'auc': '9.8366e-01',
+[92mINFO [0m:      	       'f1': '9.4027e-01',
+[92mINFO [0m:      	       'loss': '6.7346e-01',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  6: { 'accuracy': '9.5437e-01',
+[92mINFO [0m:      	       'accuracy_min': '9.2969e-01',
+[92mINFO [0m:      	       'accuracy_std': '1.3528e-02',
+[92mINFO [0m:      	       'auc': '9.8986e-01',
+[92mINFO [0m:      	       'f1': '9.5444e-01',
+[92mINFO [0m:      	       'loss': '4.2671e-01',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  7: { 'accuracy': '9.6969e-01',
+[92mINFO [0m:      	       'accuracy_min': '9.5312e-01',
+[92mINFO [0m:      	       'accuracy_std': '1.0346e-02',
+[92mINFO [0m:      	       'auc': '9.9648e-01',
+[92mINFO [0m:      	       'f1': '9.6995e-01',
+[92mINFO [0m:      	       'loss': '1.6716e-01',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  8: { 'accuracy': '9.8344e-01',
+[92mINFO [0m:      	       'accuracy_min': '9.7813e-01',
+[92mINFO [0m:      	       'accuracy_std': '5.0967e-03',
+[92mINFO [0m:      	       'auc': '9.9916e-01',
+[92mINFO [0m:      	       'f1': '9.8349e-01',
+[92mINFO [0m:      	       'loss': '4.1802e-02',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  9: { 'accuracy': '9.8594e-01',
+[92mINFO [0m:      	       'accuracy_min': '9.8281e-01',
+[92mINFO [0m:      	       'accuracy_std': '3.2775e-03',
+[92mINFO [0m:      	       'auc': '9.9934e-01',
+[92mINFO [0m:      	       'f1': '9.8584e-01',
+[92mINFO [0m:      	       'loss': '3.3528e-02',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  10: { 'accuracy': '9.7844e-01',
+[92mINFO [0m:      	        'accuracy_min': '9.7188e-01',
+[92mINFO [0m:      	        'accuracy_std': '3.8780e-03',
+[92mINFO [0m:      	        'auc': '9.9874e-01',
+[92mINFO [0m:      	        'f1': '9.7828e-01',
+[92mINFO [0m:      	        'loss': '4.8064e-02',
+[92mINFO [0m:      	        'num_clients': '5.0000e+00'}}
+[92mINFO [0m:      	
+[92mINFO [0m:      	ServerApp-side Evaluate Metrics:
+[92mINFO [0m:      	{ 0: { 'accuracy': '5.6550e-01',
+[92mINFO [0m:      	       'auc': '6.7813e-01',
+[92mINFO [0m:      	       'f1': '6.8457e-01',
+[92mINFO [0m:      	       'loss': '6.8447e-01'},
+[92mINFO [0m:      	  1: { 'accuracy': '8.9625e-01',
+[92mINFO [0m:      	       'auc': '9.7108e-01',
+[92mINFO [0m:      	       'f1': '8.9030e-01',
+[92mINFO [0m:      	       'loss': '3.7693e-01'},
+[92mINFO [0m:      	  2: { 'accuracy': '9.0400e-01',
+[92mINFO [0m:      	       'auc': '9.7307e-01',
+[92mINFO [0m:      	       'f1': '9.0041e-01',
+[92mINFO [0m:      	       'loss': '2.8055e-01'},
+[92mINFO [0m:      	  3: { 'accuracy': '9.1050e-01',
+[92mINFO [0m:      	       'auc': '9.7746e-01',
+[92mINFO [0m:      	       'f1': '9.0849e-01',
+[92mINFO [0m:      	       'loss': '5.6908e-01'},
+[92mINFO [0m:      	  4: { 'accuracy': '9.2275e-01',
+[92mINFO [0m:      	       'auc': '9.8090e-01',
+[92mINFO [0m:      	       'f1': '9.2234e-01',
+[92mINFO [0m:      	       'loss': '7.2045e-01'},
+[92mINFO [0m:      	  5: { 'accuracy': '9.3650e-01',
+[92mINFO [0m:      	       'auc': '9.8454e-01',
+[92mINFO [0m:      	       'f1': '9.3650e-01',
+[92mINFO [0m:      	       'loss': '6.2104e-01'},
+[92mINFO [0m:      	  6: { 'accuracy': '9.5350e-01',
+[92mINFO [0m:      	       'auc': '9.9148e-01',
+[92mINFO [0m:      	       'f1': '9.5391e-01',
+[92mINFO [0m:      	       'loss': '3.5444e-01'},
+[92mINFO [0m:      	  7: { 'accuracy': '9.7075e-01',
+[92mINFO [0m:      	       'auc': '9.9620e-01',
+[92mINFO [0m:      	       'f1': '9.7103e-01',
+[92mINFO [0m:      	       'loss': '1.4770e-01'},
+[92mINFO [0m:      	  8: { 'accuracy': '9.8150e-01',
+[92mINFO [0m:      	       'auc': '9.9906e-01',
+[92mINFO [0m:      	       'f1': '9.8163e-01',
+[92mINFO [0m:      	       'loss': '4.6921e-02'},
+[92mINFO [0m:      	  9: { 'accuracy': '9.8425e-01',
+[92mINFO [0m:      	       'auc': '9.9927e-01',
+[92mINFO [0m:      	       'f1': '9.8428e-01',
+[92mINFO [0m:      	       'loss': '3.6891e-02'},
+[92mINFO [0m:      	  10: { 'accuracy': '9.7850e-01',
+[92mINFO [0m:      	        'auc': '9.9867e-01',
+[92mINFO [0m:      	        'f1': '9.7857e-01',
+[92mINFO [0m:      	        'loss': '5.3723e-02'}}
+[92mINFO [0m:      
+
+>>> FedYogi / iid: acuracia 0.9785 | F1 0.9786 | AUC 0.9987 | treino efetivo 24.30s | wall-clock 79.59s
+
+[36m(ClientAppActor pid=25620)[0m [93mWARNING [0m:   Manually terminating ClientAppActor
+[36m(pid=26404)[0m 2026-10-18 15:52:36.387639: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.[32m [repeated 5x across cluster][0m
+[92mINFO [0m:      

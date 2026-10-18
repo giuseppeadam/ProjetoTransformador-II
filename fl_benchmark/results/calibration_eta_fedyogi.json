@@ -1,0 +1,68 @@
+{
+  "strategy": "fedyogi",
+  "partition_used": "iid",
+  "chosen_eta": 0.3,
+  "criterion": "maior acuracia final na particao IID. O desempate por rounds ate 99% nao se aplicou: nenhum valor de eta alcancou esse alvo em 10 rounds, o que e em si um resultado do benchmark",
+  "sweep": [
+    {
+      "eta": 0.01,
+      "final_accuracy": 0.9335,
+      "final_f1": 0.931301652892562,
+      "final_auc": 0.98828275,
+      "rounds_to_95": null,
+      "rounds_to_99": null,
+      "accuracy_curve": {
+        "1": 0.6558,
+        "2": 0.7595,
+        "3": 0.8317,
+        "4": 0.8755,
+        "5": 0.9048,
+        "6": 0.919,
+        "7": 0.9277,
+        "8": 0.9327,
+        "9": 0.9363,
+        "10": 0.9335
+      }
+    },
+    {
+      "eta": 0.3,
+      "final_accuracy": 0.98425,
+      "final_f1": 0.9843322556577966,
+      "final_auc": 0.99774925,
+      "rounds_to_95": 3,
+      "rounds_to_99": null,
+      "accuracy_curve": {
+        "1": 0.8488,
+        "2": 0.9062,
+        "3": 0.9505,
+        "4": 0.9765,
+        "5": 0.9738,
+        "6": 0.974,
+        "7": 0.9842,
+        "8": 0.9842,
+        "9": 0.9822,
+        "10": 0.9842
+      }
+    },
+    {
+      "eta": 0.6,
+      "final_accuracy": 0.9725,
+      "final_f1": 0.9717514124293786,
+      "final_auc": 0.9959036250000001,
+      "rounds_to_95": 4,
+      "rounds_to_99": null,
+      "accuracy_curve": {
+        "1": 0.8153,
+        "2": 0.8825,
+        "3": 0.9193,
+        "4": 0.952,
+        "5": 0.9633,
+        "6": 0.9573,
+        "7": 0.9567,
+        "8": 0.978,
+        "9": 0.9802,
+        "10": 0.9725
+      }
+    }
+  ]
+}

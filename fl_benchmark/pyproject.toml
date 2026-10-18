@@ -1,0 +1,85 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fl-benchmark"
+version = "1.0.0"
+description = "Benchmark de estrategias de Federated Learning com Flower sobre dados de produtividade estudantil"
+requires-python = ">=3.10"
+dependencies = [
+    "flwr[simulation]>=1.28.0",
+    "torch>=2.5.0",
+    "pandas>=2.0.0",
+    "scikit-learn>=1.5.0",
+    "numpy>=1.26.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["fl_benchmark"]
+
+[tool.flwr.app]
+publisher = "pepe"
+
+[tool.flwr.app.components]
+serverapp = "fl_benchmark.server_app:app"
+clientapp = "fl_benchmark.client_app:app"
+
+# Configuracao padrao de uma execucao. Qualquer chave pode ser sobrescrita na
+# linha de comando com --run-config, sem editar este arquivo.
+[tool.flwr.app.config]
+
+# --- O que executar ---------------------------------------------------------
+# strategy: fedavg | fedprox | fedadam | fedyogi | fedtrimmedavg
+strategy = "fedavg"
+# partition: iid (controle) | noniid (Dirichlet)
+partition = "iid"
+dataset = "productivity"
+
+# --- Protocolo do benchmark -------------------------------------------------
+# num-clients deve ser igual ao num-supernodes da federacao usada, pois o
+# servidor monta a particao com este valor e os clientes recebem o seu indice
+# da federacao.
+num-clients = 5
+num-server-rounds = 10
+local-epochs = 3
+fraction-evaluate = 1.0
+seed = 42
+
+# --- Treino local -----------------------------------------------------------
+learning-rate = 0.01
+batch-size = 32
+eval-batch-size = 256
+val-fraction = 0.2
+# device: auto | cpu | cuda. O padrao e cpu porque a rede tem cerca de mil
+# parametros e o custo de lancar kernels CUDA supera o ganho de paralelismo;
+# a comparacao medida esta documentada no README da raiz.
+device = "cpu"
+
+# --- Particao non-IID -------------------------------------------------------
+# Alpha baixo concentra classes em poucos clientes; alpha alto tende ao IID.
+dirichlet-alpha = 0.3
+
+# --- Alvo de convergencia ---------------------------------------------------
+# Acuracia central a partir da qual o modelo global e considerado convergido,
+# usada para medir eficiencia de comunicacao.
+convergence-target = 0.95
+
+# --- Hiperparametros especificos de cada estrategia -------------------------
+# Ignorados pelas estrategias que nao os utilizam.
+# FedProx: peso do termo proximal aplicado no cliente.
+proximal-mu = 0.01
+# FedTrimmedAvg: fracao descartada em cada extremo antes da media.
+trim-beta = 0.2
+# FedAdam e FedYogi: otimizador adaptativo no servidor.
+# eta e a taxa de aprendizado do SERVIDOR, que o FedAvg nao possui. O valor foi
+# calibrado na particao IID varrendo 0.01, 0.1, 0.3, 0.6 e 1.0; o registro da
+# varredura esta em results/calibration_eta_<estrategia>.json. Com 1.0 o
+# treinamento divergiu.
+eta = 0.3
+# Taxa do cliente declarada a estrategia. O treino local usa learning-rate,
+# enviada por train_config, e nao este valor.
+eta-l = 0.1
+beta-1 = 0.9
+beta-2 = 0.99
+tau = 1e-9

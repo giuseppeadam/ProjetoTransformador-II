@@ -1,0 +1,153 @@
+Flower App configuration warnings in 'C:\Users\Giuseppe\estudo\proj-transf\ProjetoTransformador-II\fl_benchmark\pyproject.toml':
+- Recommended property "license" missing in [project]
+Using SuperLink: local-simulation (127.0.0.1:39093)
+⚠️ Warning: `options.` fields in the SuperLink connection configuration are deprecated. Use `--federation-config` with `flwr run` instead. Alternatively, permanently set your simulation configuration via `flwr federation simulation-config`.
+⚠️ Warning: `--federation-config` was provided, so deprecated `options.` entries from the SuperLink connection in your Flower configuration will be ignored.
+Successfully started run 66170553386490222
+[92mINFO [0m:      Starting logstream for run_id `66170553386490222`
+[92mINFO [0m:      Starting Flower Simulation
+[93mWARNING [0m:   Since flwr 1.32, default simulated SuperNodes changed from 10 to 2.
+[92mINFO [0m:      Federation `@none/default` (5 simulated SuperNodes)
+[92mINFO [0m:      To change federation size, use the following command:
+[92mINFO [0m:      	flwr federation simulation-config @none/default <superlink> --num-supernodes <N>
+[32m[1mSuccessfully installed fl-benchmark to C:\Users\Giuseppe\.flwr\apps\pepe.fl-benchmark.1.0.0.f6f93646.[0m
+[93mWARNING [0m:   Skipping `flwr` dependency from app requirements to avoid replacing the running Flower installation.
+[92mINFO [0m:      Created env for run in: C:\Users\Giuseppe\.flwr\runtime-envs\66170553386490222
+[92mINFO [0m:      Installing application dependencies...
+[92mINFO [0m:      Installed: [alembic==1.20.0, annotated-doc==0.0.5, annotated-types==0.8.0, anyio==4.15.1, attrs==26.1.0, certifi==2026.10.18, cffi==2.1.1, charset-normalizer==3.5.2, click==8.5.0, cloudpickle==3.1.2, colorama==0.4.6, cryptography==50.0.2, fastapi==0.138.2, filelock==4.2.2, fsspec==2026.9.0, greenlet==3.5.6, grpcio-health-checking==1.81.1, grpcio==1.84.0, h11==0.16.0, httpcore==1.0.9, httptools==0.9.0, httpx==0.28.1, idna==3.20, iterators==0.0.2, jinja2==3.1.6, joblib==1.6.0, jsonschema-specifications==2025.9.1, jsonschema==4.26.0, mako==1.4.3, markdown-it-py==4.2.0, markupsafe==3.0.4, mdurl==0.1.2, mpmath==1.3.0, msgpack==1.2.3, narwhals==2.27.1, networkx==3.7, numpy==2.5.4, packaging==25.0, pandas==3.0.6, pathspec==1.1.1, prompt-toolkit==3.0.53, protobuf==6.33.6, pycparser==3.11, pycryptodome==3.24.1, pydantic-core==2.50.1, pydantic==2.14.1, pygments==2.21.0, python-dateutil==2.9.0.post0, python-dotenv==1.2.4, pyyaml==6.0.3, ray==2.55.1, referencing==0.37.0, requests==2.34.2, rich==14.3.4, rpds-py==2026.9.1, scikit-learn==1.9.1, scipy==1.18.1, setuptools==84.0.0, shellingham==1.5.4, six==1.17.0, sqlalchemy==2.1.5, starlette==1.3.1, sympy==1.14.0, threadpoolctl==3.7.0, tomli-w==1.2.0, tomli==2.5.0, torch==2.14.1, typer==0.20.1, typing-extensions==4.16.0, typing-inspection==0.4.4, tzdata==2026.5, urllib3==2.8.0, uv==0.12.24, uvicorn==0.49.0, watchfiles==1.3.0, wcwidth==0.9.2, websockets==17.2]
+[92mINFO [0m:      App dependencies installed successfully via uv sync.
+
+>>> estrategia: FedAdam | particao: noniid | device: cpu
+
+[92mINFO [0m:      Starting FedAdam strategy:
+[92mINFO [0m:      	├── Number of rounds: 10
+[92mINFO [0m:      	├── ArrayRecord (0.00 MB)
+[92mINFO [0m:      	├── ConfigRecord (train): {'lr': 0.01}
+[92mINFO [0m:      	├── ConfigRecord (evaluate): (empty!)
+[92mINFO [0m:      	├──> FedOpt settings:
+[92mINFO [0m:      	│	├── eta (0.01) | eta_l (0.1)
+[92mINFO [0m:      	│	├── beta_1 (0.9) | beta_2 (0.99)
+[92mINFO [0m:      	│	└── tau (1e-09)
+[92mINFO [0m:      	├──> Sampling:
+[92mINFO [0m:      	│	├──Fraction: train (1.00) | evaluate ( 1.00)
+[92mINFO [0m:      	│	├──Minimum nodes: train (5) | evaluate (5)
+[92mINFO [0m:      	│	└──Minimum available nodes: 5
+[92mINFO [0m:      	└──> Keys in records:
+[92mINFO [0m:      		├── Weighted by: 'num-examples'
+[92mINFO [0m:      		├── ArrayRecord key: 'arrays'
+[92mINFO [0m:      		└── ConfigRecord key: 'config'
+[92mINFO [0m:      
+[92mINFO [0m:      Initial global evaluation results: {'accuracy': 0.5655, 'f1': 0.6845735027223231, 'auc': 0.6781311250000001, 'loss': 0.6844697303771973}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 1/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[91mERROR [0m:     An exception occured!! The current node timed out during startup. This could happen because some of the raylet failed to startup or the GCS has become overloaded.
+[91mERROR [0m:     Traceback (most recent call last):
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\vce_api.py", line 214, in run_api
+    backend = backend_fn()
+              ^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\vce_api.py", line 353, in backend_fn
+    return RayBackend(backend_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\backend\raybackend.py", line 52, in __init__
+    self.init_ray(backend_config)
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\backend\raybackend.py", line 119, in init_ray
+    ray.init(
+  File "C:\Users\Giuseppe\.flwr\runtime-envs\66170553386490222\Lib\site-packages\ray\_private\client_mode_hook.py", line 107, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\.flwr\runtime-envs\66170553386490222\Lib\site-packages\ray\_private\worker.py", line 1905, in init
+    _global_node = ray._private.node.Node(
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\.flwr\runtime-envs\66170553386490222\Lib\site-packages\ray\_private\node.py", line 423, in __init__
+    raise Exception(
+Exception: The current node timed out during startup. This could happen because some of the raylet failed to startup or the GCS has become overloaded.
+
+[93mWARNING [0m:   Stopping Simulation Runtime.
+[91mERROR [0m:     An exception occurred !! Simulation Runtime crashed.
+[91mERROR [0m:     Traceback (most recent call last):
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\vce_api.py", line 214, in run_api
+    backend = backend_fn()
+              ^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\vce_api.py", line 353, in backend_fn
+    return RayBackend(backend_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\backend\raybackend.py", line 52, in __init__
+    self.init_ray(backend_config)
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\backend\raybackend.py", line 119, in init_ray
+    ray.init(
+  File "C:\Users\Giuseppe\.flwr\runtime-envs\66170553386490222\Lib\site-packages\ray\_private\client_mode_hook.py", line 107, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\.flwr\runtime-envs\66170553386490222\Lib\site-packages\ray\_private\worker.py", line 1905, in init
+    _global_node = ray._private.node.Node(
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\.flwr\runtime-envs\66170553386490222\Lib\site-packages\ray\_private\node.py", line 423, in __init__
+    raise Exception(
+Exception: The current node timed out during startup. This could happen because some of the raylet failed to startup or the GCS has become overloaded.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\simulation\run_simulation.py", line 318, in _main_loop
+    vce.start_vce(
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\vce_api.py", line 405, in start_vce
+    raise ex
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\vce_api.py", line 385, in start_vce
+    run_api(
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\vce_api.py", line 267, in run_api
+    raise RuntimeError("Simulation Runtime crashed.") from ex
+RuntimeError: Simulation Runtime crashed.
+
+[91mERROR [0m:     Simulation raised an exception
+Traceback (most recent call last):
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\vce_api.py", line 214, in run_api
+    backend = backend_fn()
+              ^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\vce_api.py", line 353, in backend_fn
+    return RayBackend(backend_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\backend\raybackend.py", line 52, in __init__
+    self.init_ray(backend_config)
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\backend\raybackend.py", line 119, in init_ray
+    ray.init(
+  File "C:\Users\Giuseppe\.flwr\runtime-envs\66170553386490222\Lib\site-packages\ray\_private\client_mode_hook.py", line 107, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\.flwr\runtime-envs\66170553386490222\Lib\site-packages\ray\_private\worker.py", line 1905, in init
+    _global_node = ray._private.node.Node(
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\.flwr\runtime-envs\66170553386490222\Lib\site-packages\ray\_private\node.py", line 423, in __init__
+    raise Exception(
+Exception: The current node timed out during startup. This could happen because some of the raylet failed to startup or the GCS has become overloaded.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\simulation\run_simulation.py", line 318, in _main_loop
+    vce.start_vce(
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\vce_api.py", line 405, in start_vce
+    raise ex
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\vce_api.py", line 385, in start_vce
+    run_api(
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\server\superlink\fleet\vce\vce_api.py", line 267, in run_api
+    raise RuntimeError("Simulation Runtime crashed.") from ex
+RuntimeError: Simulation Runtime crashed.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\simulation\app.py", line 333, in run_simulation_process
+    simulation_result = _run_simulation(
+                        ^^^^^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\simulation\run_simulation.py", line 491, in _run_simulation
+    simulation_result = _main_loop(*args)
+                        ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Giuseppe\AppData\Local\Programs\Python\Python312\Lib\site-packages\flwr\simulation\run_simulation.py", line 346, in _main_loop
+    raise RuntimeError("An error was encountered. Ending simulation.") from ex
+RuntimeError: An error was encountered. Ending simulation.
+[91mERROR [0m:     Exit Code: 700
+
+An unhandled exception occurred when running the simulation.
+
+For more information, visit: <https://flower.ai/docs/framework/1.35/en/ref-exit-codes/700.html>

@@ -1,0 +1,108 @@
+{
+  "strategy": "fedadam",
+  "partition_used": "iid",
+  "chosen_eta": 0.3,
+  "criterion": "maior acuracia final na particao IID. O desempate por rounds ate 99% nao se aplicou: nenhum valor de eta alcancou esse alvo em 10 rounds, o que e em si um resultado do benchmark",
+  "sweep": [
+    {
+      "eta": 0.01,
+      "final_accuracy": 0.92125,
+      "final_f1": 0.9179046129788898,
+      "final_auc": 0.982633,
+      "rounds_to_95": null,
+      "rounds_to_99": null,
+      "accuracy_curve": {
+        "1": 0.629,
+        "2": 0.704,
+        "3": 0.7682,
+        "4": 0.8165,
+        "5": 0.849,
+        "6": 0.8738,
+        "7": 0.8895,
+        "8": 0.904,
+        "9": 0.9143,
+        "10": 0.9213
+      }
+    },
+    {
+      "eta": 0.1,
+      "final_accuracy": 0.9735,
+      "final_f1": 0.9738658777120316,
+      "final_auc": 0.9978733750000001,
+      "rounds_to_95": 8,
+      "rounds_to_99": null,
+      "accuracy_curve": {
+        "1": 0.8872,
+        "2": 0.9103,
+        "3": 0.9117,
+        "4": 0.9173,
+        "5": 0.9257,
+        "6": 0.9323,
+        "7": 0.9377,
+        "8": 0.9505,
+        "9": 0.9645,
+        "10": 0.9735
+      }
+    },
+    {
+      "eta": 0.3,
+      "final_accuracy": 0.98675,
+      "final_f1": 0.9867466866716679,
+      "final_auc": 0.9993735,
+      "rounds_to_95": 4,
+      "rounds_to_99": null,
+      "accuracy_curve": {
+        "1": 0.8555,
+        "2": 0.9015,
+        "3": 0.9297,
+        "4": 0.955,
+        "5": 0.9718,
+        "6": 0.9805,
+        "7": 0.9762,
+        "8": 0.9745,
+        "9": 0.9798,
+        "10": 0.9868
+      }
+    },
+    {
+      "eta": 0.6,
+      "final_accuracy": 0.97875,
+      "final_f1": 0.9790485580478185,
+      "final_auc": 0.99717925,
+      "rounds_to_95": 4,
+      "rounds_to_99": null,
+      "accuracy_curve": {
+        "1": 0.823,
+        "2": 0.905,
+        "3": 0.945,
+        "4": 0.9645,
+        "5": 0.9665,
+        "6": 0.9718,
+        "7": 0.9758,
+        "8": 0.9782,
+        "9": 0.9835,
+        "10": 0.9788
+      }
+    },
+    {
+      "eta": 1.0,
+      "final_accuracy": 0.5025,
+      "final_f1": 0.667779632721202,
+      "final_auc": 0.5287601249999999,
+      "rounds_to_95": 5,
+      "rounds_to_99": null,
+      "accuracy_curve": {
+        "1": 0.8167,
+        "2": 0.868,
+        "3": 0.9327,
+        "4": 0.9463,
+        "5": 0.9637,
+        "6": 0.9722,
+        "7": 0.9623,
+        "8": 0.978,
+        "9": 0.8445,
+        "10": 0.5025
+      }
+    }
+  ]
+}

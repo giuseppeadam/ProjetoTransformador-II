@@ -1,0 +1,24 @@
+{
+  "kind": "centralized_baseline",
+  "dataset": "productivity",
+  "device": "cpu",
+  "config": {
+    "epochs": 30,
+    "batch-size": 32,
+    "learning-rate": 0.01,
+    "seed": 42
+  },
+  "train_samples": 16000,
+  "test_samples": 4000,
+  "final": {
+    "accuracy": 0.99325,
+    "f1": 0.9932381667918858,
+    "auc": 0.9998090000000001,
+    "loss": 0.017696702837944032,
+    "train_loss": 0.022835411002825344
+  },
+  "timing": {
+    "train_effective_s": 31.46250790002523,
+    "wall_clock_s": 34.50410170000396
+  }
+}

@@ -1,0 +1,32 @@
+10 execucoes em sequencia
+
+[fedavg / iid] iniciando
+[fedavg / iid] concluido em 175.8s -> fedavg_iid.log
+[fedavg / noniid] iniciando
+[fedavg / noniid] concluido em 182.2s -> fedavg_noniid.log
+[fedprox / iid] iniciando
+[fedprox / iid] concluido em 181.6s -> fedprox_iid.log
+[fedprox / noniid] iniciando
+[fedprox / noniid] concluido em 193.7s -> fedprox_noniid.log
+[fedadam / iid] iniciando
+[fedadam / iid] concluido em 181.5s -> fedadam_iid.log
+[fedadam / noniid] iniciando
+[fedadam / noniid] concluido em 138.5s -> fedadam_noniid.log
+[fedyogi / iid] iniciando
+[fedyogi / iid] concluido em 179.5s -> fedyogi_iid.log
+[fedyogi / noniid] iniciando
+[fedyogi / noniid] concluido em 179.0s -> fedyogi_noniid.log
+[fedtrimmedavg / iid] iniciando
+[fedtrimmedavg / iid] concluido em 181.2s -> fedtrimmedavg_iid.log
+[fedtrimmedavg / noniid] iniciando
+[fedtrimmedavg / noniid] concluido em 180.2s -> fedtrimmedavg_noniid.log
+
+10/10 concluidas em 29.6 min
+
+Consolidando comparativo...
+Relatorio atualizado: FEDAVG.md
+Relatorio atualizado: FEDPROX.md
+Relatorio atualizado: FEDADAM.md
+Relatorio atualizado: FEDYOGI.md
+Relatorio atualizado: FEDTRIMMEDAVG.md
+Comparativo gravado em C:\Users\Giuseppe\estudo\proj-transf\ProjetoTransformador-II\fl_benchmark\results\README.md

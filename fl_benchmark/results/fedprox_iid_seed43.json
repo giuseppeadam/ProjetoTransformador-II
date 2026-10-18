@@ -1,0 +1,223 @@
+{
+  "strategy": "fedprox",
+  "partition": "iid",
+  "dataset": "productivity",
+  "device": "cpu",
+  "config": {
+    "strategy": "fedprox",
+    "partition": "iid",
+    "dataset": "productivity",
+    "num-clients": 5,
+    "num-server-rounds": 10,
+    "local-epochs": 3,
+    "learning-rate": 0.01,
+    "batch-size": 32,
+    "eval-batch-size": 256,
+    "fraction-evaluate": 1.0,
+    "dirichlet-alpha": 0.3,
+    "val-fraction": 0.2,
+    "seed": 43,
+    "device": "cpu",
+    "proximal-mu": 0.01,
+    "trim-beta": 0.2,
+    "eta": 0.3,
+    "eta-l": 0.1,
+    "beta-1": 0.9,
+    "beta-2": 0.99,
+    "tau": 1e-09,
+    "convergence-target": 0.95
+  },
+  "partition_summary": {
+    "client_sizes": [
+      3200,
+      3200,
+      3200,
+      3200,
+      3200
+    ],
+    "class_counts": [
+      [
+        1596,
+        1604
+      ],
+      [
+        1606,
+        1594
+      ],
+      [
+        1610,
+        1590
+      ],
+      [
+        1635,
+        1565
+      ],
+      [
+        1553,
+        1647
+      ]
+    ],
+    "max_class_share": 0.5147,
+    "mean_max_class_share": 0.5064
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "central_accuracy": 0.982,
+      "central_f1": 0.9821870361207323,
+      "central_auc": 0.99932325,
+      "central_loss": 0.06233051919937134,
+      "federated_accuracy": 0.98375,
+      "federated_accuracy_std": 0.004374999999999999,
+      "federated_accuracy_min": 0.9765625,
+      "federated_f1": 0.9838381878237132,
+      "federated_auc": 0.9990955008047832,
+      "train_loss": 0.19109451948975523,
+      "train_time_s": 3.126812400005292
+    },
+    {
+      "round": 2,
+      "central_accuracy": 0.99125,
+      "central_f1": 0.9912434325744308,
+      "central_auc": 0.99972275,
+      "central_loss": 0.03136107909679413,
+      "federated_accuracy": 0.9903125,
+      "federated_accuracy_std": 0.0047803307939932385,
+      "federated_accuracy_min": 0.9828125,
+      "federated_f1": 0.9902191227209051,
+      "federated_auc": 0.99967378534303,
+      "train_loss": 0.06064360929885879,
+      "train_time_s": 3.3909725000266917
+    },
+    {
+      "round": 3,
+      "central_accuracy": 0.993,
+      "central_f1": 0.9930174563591022,
+      "central_auc": 0.9998575,
+      "central_loss": 0.023684662401676177,
+      "federated_accuracy": 0.99125,
+      "federated_accuracy_std": 0.004800716092417909,
+      "federated_accuracy_min": 0.9828125,
+      "federated_f1": 0.9913075752277117,
+      "federated_auc": 0.9997948725007791,
+      "train_loss": 0.04639388419260892,
+      "train_time_s": 3.442513100017095
+    },
+    {
+      "round": 4,
+      "central_accuracy": 0.99,
+      "central_f1": 0.9899396378269618,
+      "central_auc": 0.999744,
+      "central_loss": 0.024682249009609223,
+      "federated_accuracy": 0.989375,
+      "federated_accuracy_std": 0.005537514108334168,
+      "federated_accuracy_min": 0.9828125,
+      "federated_f1": 0.9892888274505615,
+      "federated_auc": 0.9997088921912143,
+      "train_loss": 0.038837605654844086,
+      "train_time_s": 3.22877110002446
+    },
+    {
+      "round": 5,
+      "central_accuracy": 0.9935,
+      "central_f1": 0.99347061778001,
+      "central_auc": 0.99990175,
+      "central_loss": 0.018544199168682097,
+      "federated_accuracy": 0.9928125,
+      "federated_accuracy_std": 0.002724311839712927,
+      "federated_accuracy_min": 0.9890625,
+      "federated_f1": 0.9927814053874688,
+      "federated_auc": 0.9998495744705912,
+      "train_loss": 0.039241303966070215,
+      "train_time_s": 3.2896713000372984
+    },
+    {
+      "round": 6,
+      "central_accuracy": 0.99275,
+      "central_f1": 0.9927914491672881,
+      "central_auc": 0.999865,
+      "central_loss": 0.019812721192836762,
+      "federated_accuracy": 0.989375,
+      "federated_accuracy_std": 0.0041221581119603,
+      "federated_accuracy_min": 0.9828125,
+      "federated_f1": 0.9894447389774743,
+      "federated_auc": 0.999728470298026,
+      "train_loss": 0.0347964375243949,
+      "train_time_s": 3.3157670999935362
+    },
+    {
+      "round": 7,
+      "central_accuracy": 0.994,
+      "central_f1": 0.9940268790443006,
+      "central_auc": 0.999922,
+      "central_loss": 0.017773884654045106,
+      "federated_accuracy": 0.991875,
+      "federated_accuracy_std": 0.003336586953759793,
+      "federated_accuracy_min": 0.9859375,
+      "federated_f1": 0.9918852923926623,
+      "federated_auc": 0.9998769382596941,
+      "train_loss": 0.032752535308924656,
+      "train_time_s": 3.492022199963685
+    },
+    {
+      "round": 8,
+      "central_accuracy": 0.991,
+      "central_f1": 0.9910358565737052,
+      "central_auc": 0.999798,
+      "central_loss": 0.020964789390563964,
+      "federated_accuracy": 0.990625,
+      "federated_accuracy_std": 0.001711632992203628,
+      "federated_accuracy_min": 0.9875,
+      "federated_f1": 0.9906360816889319,
+      "federated_auc": 0.9997929180059731,
+      "train_loss": 0.03222618506469492,
+      "train_time_s": 3.427013300039107
+    },
+    {
+      "round": 9,
+      "central_accuracy": 0.9915,
+      "central_f1": 0.9915506958250497,
+      "central_auc": 0.9998217500000001,
+      "central_loss": 0.022557758569717406,
+      "federated_accuracy": 0.99,
+      "federated_accuracy_std": 0.004485218779502309,
+      "federated_accuracy_min": 0.98125,
+      "federated_f1": 0.9900768448356684,
+      "federated_auc": 0.9997636461484146,
+      "train_loss": 0.032257708248895754,
+      "train_time_s": 3.444057199987583
+    },
+    {
+      "round": 10,
+      "central_accuracy": 0.993,
+      "central_f1": 0.9929859719438878,
+      "central_auc": 0.9998702500000001,
+      "central_loss": 0.016862859964370727,
+      "federated_accuracy": 0.9925,
+      "federated_accuracy_std": 0.002296396633859262,
+      "federated_accuracy_min": 0.9890625,
+      "federated_f1": 0.9924703576087411,
+      "federated_auc": 0.9998788594735377,
+      "train_loss": 0.03112798536754174,
+      "train_time_s": 3.4140914999879897
+    }
+  ],
+  "final": {
+    "central_accuracy": 0.993,
+    "central_f1": 0.9929859719438878,
+    "central_auc": 0.9998702500000001,
+    "central_loss": 0.016862859964370727,
+    "federated_accuracy": 0.9925,
+    "federated_accuracy_std": 0.002296396633859262,
+    "federated_accuracy_min": 0.9890625
+  },
+  "timing": {
+    "train_effective_s": 33.57169170008274,
+    "wall_clock_s": 75.62693290002062,
+    "mean_round_s": 7.562693290002062
+  },
+  "convergence": {
+    "target": 0.95,
+    "rounds_to_target": 1
+  }
+}
