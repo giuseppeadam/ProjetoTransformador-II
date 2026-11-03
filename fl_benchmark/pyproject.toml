@@ -32,8 +32,12 @@ clientapp = "fl_benchmark.client_app:app"
 # --- O que executar ---------------------------------------------------------
 # strategy: fedavg | fedprox | fedadam | fedyogi | fedtrimmedavg
 strategy = "fedavg"
-# partition: iid (controle) | noniid (Dirichlet)
+# partition: iid (controle) | noniid (Dirichlet) | natural (lida dos dados)
 partition = "iid"
+# dataset: productivity (14 features, 20k linhas, 5 clientes sorteados)
+#        | pisa (17 features, 304k linhas, 48 paises como clientes reais)
+# O PISA exige `python preparar_pisa.py` uma vez antes do primeiro treino, e
+# num-clients = 48 junto de --federation-config num-supernodes=48.
 dataset = "productivity"
 
 # --- Protocolo do benchmark -------------------------------------------------

@@ -7,6 +7,14 @@ O benchmark compara dois regimes:
     de classes é praticamente idêntica entre clientes, então o modelo local de
     cada um já é próximo do modelo global ideal. É o cenário de controle.
 
+`natural`
+    A partição é **lida dos dados**, não construída: cada valor distinto de uma
+    coluna do dataset define um cliente. No PISA é o país, e a heterogeneidade
+    resultante é real, não simulada — a fração de alunos acima da mediana vai de
+    0,09 a 0,97 entre países, e o tamanho das partições de 925 a 20.712 alunos.
+    É o regime mais fiel ao caso de uso, já que a impossibilidade de centralizar
+    microdados educacionais nacionais é a razão de existir da federação.
+
 `noniid`
     Desbalanceamento de rótulos governado por uma distribuição de Dirichlet.
     Para cada classe, a proporção que vai a cada cliente é sorteada de
@@ -21,7 +29,7 @@ avaliadas exatamente sobre a mesma divisão de dados.
 
 import numpy as np
 
-REGIMES = ("iid", "noniid")
+REGIMES = ("iid", "noniid", "natural")
 
 # Com alpha baixo o sorteio de Dirichlet pode deixar um cliente quase vazio.
 # Abaixo deste número de amostras o sorteio é repetido, prática usual nas
@@ -62,19 +70,48 @@ def _dirichlet(y: np.ndarray, num_partitions: int, alpha: float, seed: int) -> l
     )
 
 
+def _natural(grupos: np.ndarray, num_partitions: int) -> list[np.ndarray]:
+    """Uma partição por valor distinto de `grupos`, em ordem estável.
+
+    A ordem alfabética dos rótulos de grupo fixa qual cliente recebe qual
+    partição, de modo que `partition-id` significa sempre o mesmo país entre
+    execuções — necessário para que as métricas por cliente sejam comparáveis.
+    """
+    if grupos is None:
+        raise ValueError("regime 'natural' exige os rótulos de grupo do dataset")
+
+    rotulos = np.unique(grupos)
+    if len(rotulos) != num_partitions:
+        raise ValueError(
+            f"a partição natural tem {len(rotulos)} grupos, mas a federação foi "
+            f"configurada com {num_partitions} clientes. Ajuste `num-clients` e "
+            f"`--federation-config num-supernodes` para {len(rotulos)}."
+        )
+
+    return [np.where(grupos == rotulo)[0] for rotulo in rotulos]
+
+
 def build(
     y: np.ndarray,
     num_partitions: int,
     regime: str,
     alpha: float,
     seed: int,
+    groups: np.ndarray | None = None,
 ) -> list[np.ndarray]:
     """Devolve, para cada cliente, os índices do conjunto de treino que lhe cabem."""
     if regime not in REGIMES:
         raise ValueError(f"regime de partição desconhecido: {regime!r}. Use um de {REGIMES}")
     if regime == "iid":
         return _iid(len(y), num_partitions, seed)
+    if regime == "natural":
+        return _natural(groups, num_partitions)
     return _dirichlet(y, num_partitions, alpha, seed)
+
+
+def group_names(grupos: np.ndarray) -> list[str]:
+    """Nomes dos grupos, na mesma ordem das partições de `_natural`."""
+    return [str(r) for r in np.unique(grupos)]
 
 
 def class_matrix(y: np.ndarray, particoes: list[np.ndarray]) -> np.ndarray:
@@ -135,3 +172,32 @@ def client_arrays(
         stratify=estratificar,
     )
     return X_tr, y_tr, X_val, y_val
+
+
+def build_for(
+    dataset: str,
+    y: np.ndarray,
+    *,
+    num_partitions: int,
+    regime: str,
+    alpha: float,
+    seed: int,
+) -> list[np.ndarray]:
+    """Monta a partição resolvendo os grupos do dataset quando necessário.
+
+    Existe para que cliente e servidor não precisem saber de onde vêm os
+    rótulos de grupo: o regime `natural` os busca no registro de datasets, os
+    demais os ignoram.
+    """
+    from fl_benchmark import datasets
+
+    grupos = None
+    if regime == "natural":
+        if not datasets.has_groups(dataset):
+            raise ValueError(
+                f"dataset {dataset!r} não declara coluna de agrupamento; "
+                f"regime 'natural' indisponível. Use 'iid' ou 'noniid'."
+            )
+        grupos = datasets.group_labels(dataset)
+
+    return build(y, num_partitions, regime, alpha, seed, groups=grupos)

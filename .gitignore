@@ -1,0 +1,24 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- Microdados brutos do PISA 2025 (2,2 GB) ---
+# Ficam fora do repositório por tamanho: o GitHub rejeita arquivos acima de
+# 100 MB, e um commit que os incluísse os deixaria no histórico para sempre.
+#
+# Não são necessários para reproduzir os resultados. São dados públicos da OCDE
+# (https://www.oecd.org/pisa/data/) e o que o benchmark efetivamente lê é
+# `archive/pisa_preparado/`, que ESTÁ versionado — 11 MB, reconstruível em ~4 s
+# com `python fl_benchmark/preparar_pisa.py` a partir do arquivo de origem.
+dataset_PISA_2025/
+dataset_PISA_2025.zip
+
+# --- Sistema operacional ---
+Thumbs.db
+desktop.ini
+.DS_Store

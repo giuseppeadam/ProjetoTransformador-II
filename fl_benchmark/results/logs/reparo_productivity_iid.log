@@ -1,0 +1,5 @@
+15 execucoes em sequencia
+
+[fedavg / iid / seed 42] iniciando
+[fedavg / iid / seed 42] FALHOU (codigo 4294967295) em 86.8s -> fedavg_iid_seed42.log
+[fedavg / iid / seed 43] iniciando

@@ -16,11 +16,16 @@ from pathlib import Path
 
 from fl_benchmark import datasets, metrics, report, strategies
 
-PARTICOES = ("iid", "noniid")
+PARTICOES = ("iid", "noniid", "natural")
 PARTICAO_TITULO = {
     "iid": "Partição IID (controle)",
-    "noniid": "Partição non-IID (Dirichlet)",
+    "noniid": "Partição non-IID (Dirichlet simulado)",
+    "natural": "Partição natural (uma unidade por país)",
 }
+
+# Regime que carrega a comparação de interesse em cada dataset: o Dirichlet
+# quando a heterogeneidade é simulada, o natural quando ela vem dos dados.
+REGIME_PRINCIPAL = ("natural", "noniid")
 
 
 def _num(valor, casas: int = 4) -> str:
@@ -29,23 +34,31 @@ def _num(valor, casas: int = 4) -> str:
     return f"{valor:.{casas}f}".replace(".", ",")
 
 
-def _carregar_baseline() -> dict | None:
-    caminho = report.results_dir() / "baseline.json"
+def _carregar_baseline(dataset: str) -> dict | None:
+    """Teto centralizado do dataset em questão.
+
+    O arquivo é por dataset: comparar as estratégias do PISA contra o teto do
+    dataset de produtividade não diria nada, e a troca passaria despercebida.
+    """
+    caminho = report.results_dir() / f"baseline_{dataset}.json"
     if not caminho.is_file():
         return None
     with caminho.open(encoding="utf-8") as arquivo:
-        return json.load(arquivo)
+        dados = json.load(arquivo)
+    if dados.get("dataset") != dataset:
+        return None
+    return dados
 
 
-def _indexar() -> dict[tuple[str, str], list[dict]]:
-    """Agrupa as execuções por estratégia e partição, reunindo as repetições."""
-    return report.group_runs(report.load_runs())
+def _indexar(dataset: str) -> dict[tuple[str, str], list[dict]]:
+    """Agrupa as execuções de um dataset por estratégia e partição."""
+    return report.group_runs(report.load_runs(dataset=dataset))
 
 
 def _tabela(execucoes: dict[tuple[str, str], list[dict]], particao: str) -> list[str]:
     linhas = [
-        "| Estratégia | Sementes | Acurácia | F1 | ROC-AUC | Rounds p/ ≥95% "
-        "| Rounds p/ ≥99% | Treino efetivo (s) | Desvio entre clientes | Pior cliente |",
+        "| Estratégia | Sementes | Acurácia | F1 | ROC-AUC | Rounds p/ 95% do teto "
+        "| Rounds p/ 99% do teto | Treino efetivo (s) | Desvio entre clientes | Pior cliente |",
         "|---|---|---|---|---|---|---|---|---|---|",
     ]
     for nome in strategies.NAMES:
@@ -104,9 +117,9 @@ def _skew(execucoes: dict[tuple[str, str], list[dict]]) -> list[str]:
     return linhas
 
 
-def _calibracoes() -> list[str]:
+def _calibracoes(dataset: str) -> list[str]:
     """Registra as varreduras de hiperparâmetro que precederam as execuções."""
-    arquivos = sorted(report.results_dir().glob("calibration_eta_*.json"))
+    arquivos = sorted(report.dataset_dir(dataset).glob("calibration_eta_*.json"))
     if not arquivos:
         return []
 
@@ -174,13 +187,39 @@ def _destaques(execucoes: dict[tuple[str, str], list[dict]]) -> list[str]:
     que a leitura dos resultados contradiga a tabela quando o benchmark é
     reexecutado com outra configuração ou outro dataset.
     """
+    # O regime que carrega a comparação varia com o dataset: Dirichlet quando a
+    # heterogeneidade é simulada, natural quando vem dos dados.
+    regime = next(
+        (
+            r
+            for r in REGIME_PRINCIPAL
+            if any(execucoes.get((nome, r)) for nome in strategies.NAMES)
+        ),
+        None,
+    )
+    if regime is None:
+        return []
+
+    # O teto tem de ser o mesmo usado nas tabelas, ou o texto contradiz os
+    # números logo acima dele.
+    dataset = next(
+        grupo[0]["dataset"] for grupo in execucoes.values() if grupo
+    )
+    teto = report.teto_centralizado(dataset)
+
     resumos = {
-        nome: metrics.resumo_repeticoes(execucoes[(nome, "noniid")])
+        nome: metrics.resumo_repeticoes(execucoes[(nome, regime)], teto=teto)
         for nome in strategies.NAMES
-        if execucoes.get((nome, "noniid"))
+        if execucoes.get((nome, regime))
     }
     if not resumos:
         return []
+
+    rotulo_regime = {
+        "iid": "partição IID",
+        "noniid": "partição non-IID",
+        "natural": "partição natural por país",
+    }.get(regime, f"partição {regime}")
 
     def titulo(nome: str) -> str:
         return strategies.get(nome).TITLE
@@ -217,8 +256,8 @@ def _destaques(execucoes: dict[tuple[str, str], list[dict]]) -> list[str]:
 
         if lider is not None:
             linhas.append(
-                f"- **Eficiência de comunicação:** na partição non-IID, {titulo(lider)} "
-                f"alcançou 99% de acurácia em {valor_primeiro} rounds, contra "
+                f"- **Eficiência de comunicação:** na {rotulo_regime}, {titulo(lider)} "
+                f"alcançou 99% do teto centralizado em {valor_primeiro} rounds, contra "
                 f"{valor_segundo} da segunda colocada ({titulo(segundo)}) — menos rodadas "
                 f"de troca de pesos para o mesmo resultado."
             )
@@ -235,7 +274,7 @@ def _destaques(execucoes: dict[tuple[str, str], list[dict]]) -> list[str]:
         dispersao = resumos[unica].get("rounds_to_99_spread") or 0.0
         linhas.append(
             f"- **Convergência consistente:** {titulo(unica)} foi a única estratégia a "
-            f"alcançar 99% de acurácia em todas as {num_seeds} sementes, em "
+            f"alcançar 99% do teto centralizado em todas as {num_seeds} sementes, em "
             f"{report.mais_menos(resumos[unica]['rounds_to_99'], dispersao, 1)} rounds. "
             f"As demais atingiram o alvo em parte das sementes ou em nenhuma, dentro dos "
             f"10 rounds executados."
@@ -247,10 +286,10 @@ def _destaques(execucoes: dict[tuple[str, str], list[dict]]) -> list[str]:
         nomes = ", ".join(titulo(n) for n in parciais)
         verbo = "chegaram" if len(parciais) > 1 else "chegou"
         linhas.append(
-            f"- **Alvo de 99% não alcançado de forma consistente:** {nomes} não {verbo} a "
-            f"99% de acurácia em todas as sementes dentro dos 10 rounds, e por isso "
+            f"- **Alvo de 99% do teto não alcançado de forma consistente:** {nomes} não "
+            f"{verbo} a 99% do teto em todas as sementes dentro dos rounds executados, e por isso "
             f"{'ficaram' if len(parciais) > 1 else 'ficou'} fora da comparação de "
-            f"eficiência. A coluna *Rounds p/ ≥99%* da tabela indica em quantas sementes o "
+            f"eficiência. A coluna *Rounds p/ 99% do teto* indica em quantas sementes o "
             f"alvo foi atingido."
         )
 
@@ -303,7 +342,7 @@ def _destaques(execucoes: dict[tuple[str, str], list[dict]]) -> list[str]:
         )
 
     iid = {
-        nome: metrics.resumo_repeticoes(execucoes[(nome, "iid")])
+        nome: metrics.resumo_repeticoes(execucoes[(nome, "iid")], teto=teto)
         for nome in strategies.NAMES
         if execucoes.get((nome, "iid"))
     }
@@ -314,18 +353,18 @@ def _destaques(execucoes: dict[tuple[str, str], list[dict]]) -> list[str]:
             f"- **Controle IID:** no regime homogêneo a diferença de acurácia entre a "
             f"melhor e a pior estratégia é de {_num(amplitude)}, confirmando que o "
             f"pipeline é o mesmo para todas e que a heterogeneidade dos dados, não a "
-            f"implementação, é a origem das diferenças observadas no regime non-IID."
+            f"implementação, é a origem das diferenças observadas na {rotulo_regime}."
         )
 
     return linhas
 
 
-def render() -> str:
-    execucoes = _indexar()
-    baseline = _carregar_baseline()
+def render(dataset: str) -> str:
+    execucoes = _indexar(dataset)
 
     primeiro_grupo = next(iter(execucoes.values()), None)
-    partes = ["# Comparativo das estratégias", ""]
+    spec_titulo = datasets.get_spec(dataset).description
+    partes = [f"# Comparativo das estratégias — {dataset}", "", f"> {spec_titulo}", ""]
 
     if primeiro_grupo is None:
         partes.append("Nenhuma execução registrada ainda.")
@@ -335,6 +374,7 @@ def render() -> str:
     referencia = primeiro_grupo[0]
     cfg = referencia["config"]
     spec = datasets.get_spec(referencia["dataset"])
+    baseline = _carregar_baseline(referencia["dataset"])
     sementes = sorted({r["config"]["seed"] for grupo in execucoes.values() for r in grupo})
 
     partes.append(
@@ -403,7 +443,7 @@ def render() -> str:
         partes.extend(skew)
         partes.append("")
 
-    calibracoes = _calibracoes()
+    calibracoes = _calibracoes(dataset)
     if calibracoes:
         partes.append("## Calibração dos hiperparâmetros")
         partes.append("")
@@ -433,6 +473,18 @@ def render() -> str:
         partes.append(f"- {nota}")
     partes.append("")
 
+    partes.append("## Sensibilidade ao alvo de convergência")
+    partes.append("")
+    partes.append(
+        "A coluna *rounds até o alvo* depende de qual alvo se escolhe, e a ordem das "
+        "estratégias pode mudar com ele. Uma estratégia que converge rápido para um "
+        "patamar mais baixo cruza um alvo frouxo antes; outra que converge devagar mas "
+        "termina mais alto é a única a cruzar um alvo exigente. Nenhuma das duas leituras "
+        "é errada — elas respondem a perguntas diferentes, e é por isso que dois alvos "
+        "são reportados em vez de um. Ao citar eficiência de comunicação, o alvo precisa "
+        "ser citado junto."
+    )
+    partes.append("")
     partes.append("## Como os números foram obtidos")
     partes.append("")
     partes.append(
@@ -453,7 +505,7 @@ def render() -> str:
     return "\n".join(partes)
 
 
-def regenerar_relatorios() -> list[Path]:
+def regenerar_relatorios(dataset: str) -> list[Path]:
     """Reescreve o relatório de cada estratégia a partir dos JSONs gravados.
 
     Permite ajustar a apresentação dos resultados — colunas, alvos de
@@ -461,23 +513,54 @@ def regenerar_relatorios() -> list[Path]:
     """
     gerados = []
     for nome in strategies.NAMES:
-        if not report.load_runs(nome):
+        if not report.load_runs(nome, dataset):
             continue
-        destino = report.results_dir() / f"{nome.upper()}.md"
-        destino.write_text(report.render_strategy(nome), encoding="utf-8")
+        destino = report.dataset_dir(dataset) / f"{nome.upper()}.md"
+        destino.write_text(report.render_strategy(nome, dataset), encoding="utf-8")
         gerados.append(destino)
     return gerados
 
 
+def indice_geral(presentes: list[str]) -> str:
+    """Índice na raiz de `results/`, apontando para o comparativo de cada dataset.
+
+    Cada dataset tem seu próprio comparativo porque acurácias de datasets
+    diferentes não são comparáveis entre si — o que se compara entre eles é o
+    comportamento relativo das estratégias, não os números absolutos.
+    """
+    linhas = ["# Resultados do benchmark", ""]
+    linhas.append(
+        "Um comparativo por dataset. Os números de datasets diferentes **não são "
+        "comparáveis entre si**: medem problemas de dificuldade distinta. O que se "
+        "compara entre eles é o comportamento relativo das estratégias."
+    )
+    linhas.append("")
+    linhas.append("| Dataset | Execuções | Comparativo |")
+    linhas.append("|---|---|---|")
+    for nome in presentes:
+        n = len(report.load_runs(dataset=nome))
+        linhas.append(f"| `{nome}` | {n} | [{nome}/README.md]({nome}/README.md) |")
+    linhas.append("")
+    return "\n".join(linhas)
+
+
 def main() -> None:
-    destino: Path = report.results_dir() / "README.md"
-    destino.parent.mkdir(parents=True, exist_ok=True)
+    presentes = report.datasets_com_resultados()
+    if not presentes:
+        print("nenhuma execucao encontrada em results/")
+        return
 
-    for caminho in regenerar_relatorios():
-        print(f"Relatorio atualizado: {caminho.name}")
+    for dataset in presentes:
+        for caminho in regenerar_relatorios(dataset):
+            print(f"  {dataset}: {caminho.name}")
+        destino = report.dataset_dir(dataset) / "README.md"
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        destino.write_text(render(dataset), encoding="utf-8")
+        print(f"Comparativo de {dataset} em {destino}")
 
-    destino.write_text(render(), encoding="utf-8")
-    print(f"Comparativo gravado em {destino}")
+    indice = report.results_dir() / "README.md"
+    indice.write_text(indice_geral(presentes), encoding="utf-8")
+    print(f"Indice geral em {indice}")
 
 
 if __name__ == "__main__":

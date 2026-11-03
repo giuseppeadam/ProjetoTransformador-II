@@ -37,7 +37,10 @@ def results_dir() -> Path:
     except FileNotFoundError:
         return Path.cwd() / "results"
 
-PARTICAO_LABEL = {"iid": "IID", "noniid": "non-IID"}
+PARTICAO_LABEL = {"iid": "IID", "noniid": "non-IID", "natural": "natural (por país)"}
+
+# Ordem de apresentação: o controle primeiro, depois os regimes heterogêneos.
+ORDEM_PARTICOES = {"iid": 0, "noniid": 1, "natural": 2}
 
 COLUNAS = (
     ("Partição", "particao"),
@@ -45,8 +48,8 @@ COLUNAS = (
     ("Acurácia", "accuracy"),
     ("F1", "f1"),
     ("ROC-AUC", "auc"),
-    ("Rounds p/ ≥95%", "rounds_95"),
-    ("Rounds p/ ≥99%", "rounds_99"),
+    ("Rounds p/ 95% do teto", "rounds_95"),
+    ("Rounds p/ 99% do teto", "rounds_99"),
     ("Treino efetivo", "train_effective"),
     ("Desvio entre clientes", "accuracy_std"),
     ("Pior cliente", "accuracy_min"),
@@ -67,23 +70,51 @@ def _segundos(valor) -> str:
     return f"{valor:.2f} s".replace(".", ",")
 
 
-def _json_path(strategy: str, partition: str, seed: int) -> Path:
-    return results_dir() / f"{strategy}_{partition}_seed{seed}.json"
+def dataset_dir(dataset: str) -> Path:
+    """Diretório de resultados de um dataset.
+
+    Os artefatos são separados por dataset porque o nome de uma execução é
+    `<estrategia>_<particao>_seed<N>` e dois datasets podem compartilhar o mesmo
+    regime de partição: sem a separação, executar `iid` no segundo dataset
+    sobrescreve silenciosamente os resultados `iid` do primeiro.
+    """
+    return results_dir() / dataset
 
 
-def load_runs(strategy: str | None = None) -> list[dict]:
-    """Carrega os JSONs de execução, opcionalmente filtrando por estratégia.
+def _json_path(dataset: str, strategy: str, partition: str, seed: int) -> Path:
+    return dataset_dir(dataset) / f"{strategy}_{partition}_seed{seed}.json"
 
-    Só considera arquivos cujo nome segue `<estrategia>_<particao>.json`, de
-    modo que outros artefatos gravados em `results/` — como o baseline
-    centralizado — não sejam confundidos com execuções federadas.
+
+def datasets_com_resultados() -> list[str]:
+    """Datasets que já têm execuções gravadas."""
+    base = results_dir()
+    if not base.is_dir():
+        return []
+    encontrados = []
+    for caminho in sorted(base.iterdir()):
+        if caminho.is_dir() and caminho.name != "logs":
+            if any(caminho.glob("*_seed*.json")):
+                encontrados.append(caminho.name)
+    return encontrados
+
+
+def load_runs(strategy: str | None = None, dataset: str | None = None) -> list[dict]:
+    """Carrega os JSONs de execução, filtrando por estratégia e/ou dataset.
+
+    Só considera arquivos cujo nome segue `<estrategia>_<particao>_seed<N>.json`,
+    de modo que outros artefatos — como o baseline centralizado ou os registros
+    de calibração — não sejam confundidos com execuções federadas.
     """
     alvos = [strategy] if strategy else list(strategies.NAMES)
+    bases = [dataset_dir(dataset)] if dataset else [
+        dataset_dir(d) for d in datasets_com_resultados()
+    ]
     registros = []
-    for nome in alvos:
-        for caminho in sorted(results_dir().glob(f"{nome}_*_seed*.json")):
-            with caminho.open(encoding="utf-8") as arquivo:
-                registros.append(json.load(arquivo))
+    for base in bases:
+        for nome in alvos:
+            for caminho in sorted(base.glob(f"{nome}_*_seed*.json")):
+                with caminho.open(encoding="utf-8") as arquivo:
+                    registros.append(json.load(arquivo))
     return registros
 
 
@@ -115,6 +146,26 @@ def mais_menos(media, desvio, casas: int = 4, sufixo: str = "") -> str:
     return texto + sufixo
 
 
+def teto_centralizado(dataset: str) -> float | None:
+    """Acurácia do baseline centralizado do dataset, se já foi executado.
+
+    Serve de referência para os alvos de convergência. Acurácia absoluta não
+    transfere entre datasets — 0,99 é exigente onde o teto é 0,993 e impossível
+    onde o teto é 0,719 — então os alvos são frações deste valor.
+    """
+    caminho = dataset_dir(dataset) / "baseline.json"
+    if not caminho.is_file():
+        return None
+    try:
+        with caminho.open(encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+        if dados.get("dataset") != dataset:
+            return None
+        return float(dados["final"]["accuracy"])
+    except (KeyError, ValueError, json.JSONDecodeError):
+        return None
+
+
 def _rounds_celula(resumo: dict, alvo: int) -> str:
     """Formata a coluna de rounds, explicitando repetições que não atingiram o alvo."""
     chave = f"rounds_to_{alvo}"
@@ -132,7 +183,8 @@ def _rounds_celula(resumo: dict, alvo: int) -> str:
 
 
 def linha_tabela(particao: str, runs: list[dict]) -> dict:
-    resumo = metrics.resumo_repeticoes(runs)
+    teto = teto_centralizado(runs[0]["dataset"])
+    resumo = metrics.resumo_repeticoes(runs, teto=teto)
     return {
         "particao": PARTICAO_LABEL.get(particao, particao),
         "seeds": str(resumo["num_seeds"]),
@@ -155,7 +207,7 @@ def linha_tabela(particao: str, runs: list[dict]) -> dict:
 
 def _tabela(runs: list[dict]) -> list[str]:
     grupos = group_runs(runs)
-    ordem = {"iid": 0, "noniid": 1}
+    ordem = ORDEM_PARTICOES
     cabecalho = [titulo for titulo, _ in COLUNAS]
 
     linhas = ["| " + " | ".join(cabecalho) + " |"]
@@ -207,12 +259,14 @@ def _curva(runs: list[dict]) -> list[str]:
     return linhas
 
 
-def render_strategy(strategy: str) -> str:
-    """Monta o conteúdo do README de uma estratégia."""
+def render_strategy(strategy: str, dataset: str) -> str:
+    """Monta o conteúdo do README de uma estratégia, para um dataset."""
     modulo = strategies.get(strategy)
-    runs = load_runs(strategy)
+    runs = load_runs(strategy, dataset)
     if not runs:
-        raise RuntimeError(f"nenhum resultado encontrado para a estratégia {strategy!r}")
+        raise RuntimeError(
+            f"nenhum resultado para a estratégia {strategy!r} no dataset {dataset!r}"
+        )
 
     grupos = group_runs(runs)
     referencia = runs[-1]
@@ -244,6 +298,16 @@ def render_strategy(strategy: str) -> str:
         f"sementes {rotulo_sementes} · dispositivo `{referencia['device']}`"
     )
     partes.append("")
+    teto = teto_centralizado(referencia["dataset"])
+    if teto is not None:
+        absolutos = metrics.alvos_absolutos(referencia, teto)
+        detalhe = " · ".join(
+            f"{int(f * 100)}% do teto = {_num(v)}" for f, v in sorted(absolutos.items())
+        )
+        partes.append(
+            f"Teto centralizado do dataset: {_num(teto)}. Alvos de convergência: {detalhe}."
+        )
+        partes.append("")
     if len(sementes) > 1:
         partes.append(
             f"Os valores são a média entre {len(sementes)} execuções independentes, "
@@ -254,7 +318,7 @@ def render_strategy(strategy: str) -> str:
         )
         partes.append("")
 
-    ordem = {"iid": 0, "noniid": 1}
+    ordem = ORDEM_PARTICOES
     for (_, particao), grupo in sorted(grupos.items(), key=lambda kv: ordem.get(kv[0][1], 9)):
         rotulo = PARTICAO_LABEL.get(particao, particao)
         partes.append(f"### Curva por round — partição {rotulo}")
@@ -279,6 +343,7 @@ def render_strategy(strategy: str) -> str:
             partes.append(
                 f"flwr run . --federation-config num-supernodes={cfg['num-clients']} "
                 f"--run-config 'strategy=\"{strategy}\" partition=\"{particao}\" "
+                f"dataset=\"{cfg['dataset']}\" num-clients={cfg['num-clients']} "
                 f"seed={semente}'"
             )
     partes.append("```")
@@ -301,7 +366,7 @@ def write(
     convergence: dict,
 ) -> tuple[Path, Path]:
     """Grava o JSON da execução e regenera o README da estratégia."""
-    results_dir().mkdir(parents=True, exist_ok=True)
+    dataset_dir(dataset).mkdir(parents=True, exist_ok=True)
 
     registro = {
         "strategy": strategy,
@@ -316,11 +381,11 @@ def write(
         "convergence": convergence,
     }
 
-    caminho_json = _json_path(strategy, partition, int(config["seed"]))
+    caminho_json = _json_path(dataset, strategy, partition, int(config["seed"]))
     with caminho_json.open("w", encoding="utf-8") as arquivo:
         json.dump(registro, arquivo, indent=2, ensure_ascii=False)
 
-    caminho_md = results_dir() / f"{strategy.upper()}.md"
-    caminho_md.write_text(render_strategy(strategy), encoding="utf-8")
+    caminho_md = dataset_dir(dataset) / f"{strategy.upper()}.md"
+    caminho_md.write_text(render_strategy(strategy, dataset), encoding="utf-8")
 
     return caminho_json, caminho_md

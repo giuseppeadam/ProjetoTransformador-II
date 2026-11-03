@@ -16,6 +16,7 @@ Uso:
 """
 
 import argparse
+import csv
 import os
 import subprocess
 import sys
@@ -26,6 +27,35 @@ from fl_benchmark import report, strategies
 
 AQUI = Path(__file__).resolve().parent
 PARTICOES = ("iid", "noniid")
+
+# Histórico do tempo de parede de cada processo `flwr run`. O JSON de resultado
+# só registra a duração a partir do `strategy.start()`, e fica de fora o custo
+# de construir o pacote da aplicação, criar o ambiente e subir o backend de
+# simulação — que na prática responde pela maior parte do tempo em execuções
+# pequenas. Sem este registro não há como estimar a duração de um lote.
+HISTORICO = "tempos_execucao.csv"
+COLUNAS_HISTORICO = (
+    "estrategia",
+    "particao",
+    "semente",
+    "duracao_processo_s",
+    "sucesso",
+    "num_clients",
+    "rounds",
+    "dataset",
+)
+
+
+def registrar_tempo(log_dir: Path, linha: dict) -> None:
+    """Acrescenta uma linha ao histórico de tempos, criando o cabeçalho se preciso."""
+    destino = log_dir / HISTORICO
+    novo = not destino.exists()
+    log_dir.mkdir(parents=True, exist_ok=True)
+    with destino.open("a", encoding="utf-8", newline="") as arquivo:
+        escritor = csv.DictWriter(arquivo, fieldnames=list(COLUNAS_HISTORICO))
+        if novo:
+            escritor.writeheader()
+        escritor.writerow({c: linha.get(c, "") for c in COLUNAS_HISTORICO})
 
 
 def _ambiente() -> dict:
@@ -49,6 +79,7 @@ def executar(
     rounds: int | None,
     device: str | None,
     seed: int,
+    dataset: str | None,
     log_dir: Path,
 ) -> tuple[bool, float]:
     """Executa uma combinação e devolve `(sucesso, duração)`.
@@ -58,11 +89,21 @@ def executar(
     falha na inicialização — já observado com timeout do raylet — e confiar no
     código de saída faria uma execução perdida ser contada como concluída.
     """
-    run_config = [f'strategy="{estrategia}"', f'partition="{particao}"', f"seed={seed}"]
+    # `num-clients` precisa acompanhar `num-supernodes`: o primeiro é lido pelo
+    # servidor para montar a partição, o segundo dimensiona a federação. Passar
+    # só um dos dois faz a partição discordar do número real de clientes.
+    run_config = [
+        f'strategy="{estrategia}"',
+        f'partition="{particao}"',
+        f"seed={seed}",
+        f"num-clients={num_clients}",
+    ]
     if rounds is not None:
         run_config.append(f"num-server-rounds={rounds}")
     if device is not None:
         run_config.append(f'device="{device}"')
+    if dataset is not None:
+        run_config.append(f'dataset="{dataset}"')
 
     comando = [
         "flwr",
@@ -107,6 +148,20 @@ def executar(
     else:
         estado = "FALHOU (nenhum resultado gravado)"
 
+    registrar_tempo(
+        log_dir,
+        {
+            "estrategia": estrategia,
+            "particao": particao,
+            "semente": seed,
+            "duracao_processo_s": round(duracao, 2),
+            "sucesso": int(ok),
+            "num_clients": num_clients,
+            "rounds": rounds if rounds is not None else "",
+            "dataset": dataset or "",
+        },
+    )
+
     print(
         f"[{estrategia} / {particao} / seed {seed}] {estado} em {duracao:.1f}s "
         f"-> {destino_log.name}",
@@ -135,6 +190,7 @@ def main() -> int:
     parser.add_argument("--num-clients", type=int, default=5)
     parser.add_argument("--rounds", type=int, default=None, help="sobrescreve num-server-rounds")
     parser.add_argument("--device", default=None, choices=("auto", "cpu", "cuda"))
+    parser.add_argument("--dataset", default=None, help="sobrescreve o dataset configurado")
     parser.add_argument(
         "--seeds",
         nargs="+",
@@ -165,6 +221,7 @@ def main() -> int:
             rounds=args.rounds,
             device=args.device,
             seed=semente,
+            dataset=args.dataset,
             log_dir=Path(args.log_dir),
         )
         if not ok:

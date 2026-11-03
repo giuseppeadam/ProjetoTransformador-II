@@ -1,0 +1,135 @@
+Flower App configuration warnings in 'C:\Users\Giuseppe\estudo\proj-transf\ProjetoTransformador-II\fl_benchmark\pyproject.toml':
+- Recommended property "license" missing in [project]
+Using SuperLink: local-simulation (127.0.0.1:39093)
+⚠️ Warning: `options.` fields in the SuperLink connection configuration are deprecated. Use `--federation-config` with `flwr run` instead. Alternatively, permanently set your simulation configuration via `flwr federation simulation-config`.
+⚠️ Warning: `--federation-config` was provided, so deprecated `options.` entries from the SuperLink connection in your Flower configuration will be ignored.
+Successfully started run 4283717638087638036
+[92mINFO [0m:      Starting logstream for run_id `4283717638087638036`
+[92mINFO [0m:      Starting Flower Simulation
+[93mWARNING [0m:   Since flwr 1.32, default simulated SuperNodes changed from 10 to 2.
+[92mINFO [0m:      Federation `@none/default` (48 simulated SuperNodes)
+[92mINFO [0m:      To change federation size, use the following command:
+[92mINFO [0m:      	flwr federation simulation-config @none/default <superlink> --num-supernodes <N>
+[32m[1mSuccessfully installed fl-benchmark to C:\Users\Giuseppe\.flwr\apps\pepe.fl-benchmark.1.0.0.4e2f5b27.[0m
+[93mWARNING [0m:   Skipping `flwr` dependency from app requirements to avoid replacing the running Flower installation.
+[92mINFO [0m:      Created env for run in: C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036
+[92mINFO [0m:      Installing application dependencies...
+[92mINFO [0m:      Installed: [alembic==1.20.1, annotated-doc==0.0.5, annotated-types==0.8.0, anyio==4.16.0, attrs==26.1.0, certifi==2026.10.23, cffi==2.1.1, charset-normalizer==3.5.2, click==8.5.0, cloudpickle==3.1.2, colorama==0.4.6, cryptography==50.0.2, fastapi==0.138.2, filelock==4.2.6, fsspec==2026.9.0, greenlet==3.5.6, grpcio-health-checking==1.81.1, grpcio==1.85.1, h11==0.16.0, httpcore==1.0.9, httptools==0.9.0, httpx==0.28.1, idna==3.20, iterators==0.0.2, jinja2==3.1.6, joblib==1.6.0, jsonschema-specifications==2025.9.1, jsonschema==4.26.0, mako==1.4.3, markdown-it-py==4.2.0, markupsafe==3.0.4, mdurl==0.1.2, mpmath==1.3.0, msgpack==1.2.4, narwhals==2.28.0, networkx==3.7, numpy==2.5.4, packaging==25.0, pandas==3.1.0, pathspec==1.1.1, prompt-toolkit==3.0.53, protobuf==6.33.6, pycparser==3.12, pycryptodome==3.24.1, pydantic-core==2.50.2, pydantic==2.14.2, pygments==2.21.0, python-dateutil==4.0.0, python-dotenv==1.2.4, pyyaml==6.0.3, ray==2.55.1, referencing==0.37.0, requests==2.34.2, rich==14.3.4, rpds-py==2026.9.1, scikit-learn==1.9.1, scipy==1.18.1, setuptools==84.2.1, shellingham==1.5.4, sqlalchemy==2.1.6, starlette==1.3.1, sympy==1.14.0, threadpoolctl==3.7.0, tomli-w==1.2.0, tomli==2.5.0, torch==2.15.0, typer==0.20.1, typing-extensions==4.16.0, typing-inspection==0.4.4, tzdata==2026.6, urllib3==2.8.0, uv==0.13.6, uvicorn==0.49.0, watchfiles==1.3.0, wcwidth==0.9.4, websockets==17.4]
+[92mINFO [0m:      App dependencies installed successfully via uv sync.
+
+>>> estrategia: FedAvg | particao: natural | device: cpu
+
+[92mINFO [0m:      Starting FedAvg strategy:
+[92mINFO [0m:      	├── Number of rounds: 2
+[92mINFO [0m:      	├── ArrayRecord (0.01 MB)
+[92mINFO [0m:      	├── ConfigRecord (train): {'lr': 0.01}
+[92mINFO [0m:      	├── ConfigRecord (evaluate): (empty!)
+[92mINFO [0m:      	├──> Sampling:
+[92mINFO [0m:      	│	├──Fraction: train (1.00) | evaluate ( 1.00)
+[92mINFO [0m:      	│	├──Minimum nodes: train (48) | evaluate (48)
+[92mINFO [0m:      	│	└──Minimum available nodes: 48
+[92mINFO [0m:      	└──> Keys in records:
+[92mINFO [0m:      		├── Weighted by: 'num-examples'
+[92mINFO [0m:      		├── ArrayRecord key: 'arrays'
+[92mINFO [0m:      		└── ConfigRecord key: 'config'
+[92mINFO [0m:      
+[92mINFO [0m:      Initial global evaluation results: {'accuracy': 0.5083392330869158, 'f1': 0.22908921933085502, 'auc': 0.5323999933197852, 'loss': 0.6923799699893582}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 1/2]
+[92mINFO [0m:      configure_train: Sampled 48 nodes (out of 48)
+C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\worker.py:2051: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+[33m(raylet)[0m Stack (most recent call first):
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\worker.py", line 628 in job_logging_config
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\worker.py", line 2801 in disconnect
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\worker.py", line 2132 in shutdown
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\worker.py", line 1143 in wrapper
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\worker.py"Windows fatal exception: , line 2801 in disconnect
+[33m(raylet)[0m access violation  File 
+[33m(raylet)[0m 
+[33m(raylet)[0m "Stack (most recent call first):
+[33m(raylet)[0m C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\client_mode_hook.py"  File , line "C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\worker.py"107, line 628 in job_logging_config
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\worker.py" in wrapper
+[33m(raylet)[0m , line 2801 in disconnect
+[36m(pid=23820)[0m 2026-11-01 17:51:36.723636: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+[33m(raylet)[0m Stack (most recent call first):[32m [repeated 10x across cluster] (Ray deduplicates logs by default. Set RAY_DEDUP_LOGS=0 to disable log deduplication, or see https://docs.ray.io/en/master/ray-observability/user-guides/configure-logging.html#log-deduplication for more options.)[0m
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\worker.py", line 628 in job_logging_config[32m [repeated 10x across cluster][0m
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\worker.py", line 2801 in disconnect[32m [repeated 9x across cluster][0m
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\worker.py", line 2132 in shutdown[32m [repeated 11x across cluster][0m
+[33m(raylet)[0m   File "C:\Users\Giuseppe\.flwr\runtime-envs\4283717638087638036\Lib\site-packages\ray\_private\client_mode_hook.py", line 107 in wrapper[32m [repeated 22x across cluster][0m
+[36m(pid=23820)[0m 2026-11-01 17:51:43.336890: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.[32m [repeated 6x across cluster][0m
+[92mINFO [0m:      aggregate_train: Received 48 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'local_samples': 194334.0, 'train_loss': 0.4887174121967937, 'train_time_max_s': 3.9134186999872327, 'train_time_s': 40.98278610006673, 'num_clients': 48.0}
+[92mINFO [0m:      configure_evaluate: Sampled 48 nodes (out of 48)
+[92mINFO [0m:      aggregate_evaluate: Received 48 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.6993416992388397, 'auc': 0.7519196109541822, 'eval_time_s': 0.6748809000127949, 'f1': 0.6573228854817666, 'loss': 0.6116492185492595, 'accuracy_std': 0.06498980447697415, 'accuracy_min': 0.5012886597938144, 'num_clients': 48.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.6982893458682516, 'f1': 0.7040297181619963, 'auc': 0.7675975256713343, 'loss': 0.6119558319685195}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 2/2]
+[92mINFO [0m:      configure_train: Sampled 48 nodes (out of 48)
+[92mINFO [0m:      aggregate_train: Received 48 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'local_samples': 194334.0, 'train_loss': 0.48145311381910355, 'train_time_max_s': 3.3523768999730237, 'train_time_s': 39.11491130015929, 'num_clients': 48.0}
+[92mINFO [0m:      configure_evaluate: Sampled 48 nodes (out of 48)
+[92mINFO [0m:      aggregate_evaluate: Received 48 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.7036000822875952, 'auc': 0.7612614458446311, 'eval_time_s': 0.7505725999362767, 'f1': 0.6625026968035458, 'loss': 0.5733330814221885, 'accuracy_std': 0.06159114425190592, 'accuracy_min': 0.5141752577319587, 'num_clients': 48.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.7018291980176828, 'f1': 0.7082420415001933, 'auc': 0.7746835786050408, 'loss': 0.5745184463894649}
+[92mINFO [0m:      
+[92mINFO [0m:      Strategy execution finished in 107.84s
+[92mINFO [0m:      
+[92mINFO [0m:      Final results:
+[92mINFO [0m:      
+[92mINFO [0m:      	Global Arrays:
+[92mINFO [0m:      		ArrayRecord (0.005 MB)
+[92mINFO [0m:      	
+[92mINFO [0m:      	Aggregated ClientApp-side Train Metrics:
+[92mINFO [0m:      	{ 1: { 'local_samples': '1.9433e+05',
+[92mINFO [0m:      	       'num_clients': '4.8000e+01',
+[92mINFO [0m:      	       'train_loss': '4.8872e-01',
+[92mINFO [0m:      	       'train_time_max_s': '3.9134e+00',
+[92mINFO [0m:      	       'train_time_s': '4.0983e+01'},
+[92mINFO [0m:      	  2: { 'local_samples': '1.9433e+05',
+[92mINFO [0m:      	       'num_clients': '4.8000e+01',
+[92mINFO [0m:      	       'train_loss': '4.8145e-01',
+[92mINFO [0m:      	       'train_time_max_s': '3.3524e+00',
+[92mINFO [0m:      	       'train_time_s': '3.9115e+01'}}
+[92mINFO [0m:      	
+[92mINFO [0m:      	Aggregated ClientApp-side Evaluate Metrics:
+[92mINFO [0m:      	{ 1: { 'accuracy': '6.9934e-01',
+[92mINFO [0m:      	       'accuracy_min': '5.0129e-01',
+[92mINFO [0m:      	       'accuracy_std': '6.4990e-02',
+[92mINFO [0m:      	       'auc': '7.5192e-01',
+[92mINFO [0m:      	       'eval_time_s': '6.7488e-01',
+[92mINFO [0m:      	       'f1': '6.5732e-01',
+[92mINFO [0m:      	       'loss': '6.1165e-01',
+[92mINFO [0m:      	       'num_clients': '4.8000e+01'},
+[92mINFO [0m:      	  2: { 'accuracy': '7.0360e-01',
+[92mINFO [0m:      	       'accuracy_min': '5.1418e-01',
+[92mINFO [0m:      	       'accuracy_std': '6.1591e-02',
+[92mINFO [0m:      	       'auc': '7.6126e-01',
+[92mINFO [0m:      	       'eval_time_s': '7.5057e-01',
+[92mINFO [0m:      	       'f1': '6.6250e-01',
+[92mINFO [0m:      	       'loss': '5.7333e-01',
+[92mINFO [0m:      	       'num_clients': '4.8000e+01'}}
+[92mINFO [0m:      	
+[92mINFO [0m:      	ServerApp-side Evaluate Metrics:
+[92mINFO [0m:      	{ 0: { 'accuracy': '5.0834e-01',
+[92mINFO [0m:      	       'auc': '5.3240e-01',
+[92mINFO [0m:      	       'f1': '2.2909e-01',
+[92mINFO [0m:      	       'loss': '6.9238e-01'},
+[92mINFO [0m:      	  1: { 'accuracy': '6.9829e-01',
+[92mINFO [0m:      	       'auc': '7.6760e-01',
+[92mINFO [0m:      	       'f1': '7.0403e-01',
+[92mINFO [0m:      	       'loss': '6.1196e-01'},
+[92mINFO [0m:      	  2: { 'accuracy': '7.0183e-01',
+[92mINFO [0m:      	       'auc': '7.7468e-01',
+[92mINFO [0m:      	       'f1': '7.0824e-01',
+[92mINFO [0m:      	       'loss': '5.7452e-01'}}
+[92mINFO [0m:      
+
+>>> FedAvg / natural: acuracia 0.7018 | F1 0.7082 | AUC 0.7747 | treino efetivo 80.10s | wall-clock 107.85s
+
+[36m(ClientAppActor pid=23820)[0m [93mWARNING [0m:   Manually terminating ClientAppActor
+[36m(pid=24180)[0m 2026-11-01 17:51:43.374662: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.[32m [repeated 5x across cluster][0m
+[92mINFO [0m:      

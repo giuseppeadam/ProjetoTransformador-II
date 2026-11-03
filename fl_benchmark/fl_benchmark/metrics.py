@@ -18,17 +18,34 @@ import math
 import numpy as np
 from flwr.app import MetricRecord, RecordDict
 
-# Chaves tratadas por soma, não por média ponderada.
-CHAVES_SOMADAS = ("train_time_s",)
+# Chaves tratadas por soma, não por média ponderada: representam custo total
+# acumulado entre clientes, e promediá-las esconderia o custo do round.
+CHAVES_SOMADAS = ("train_time_s", "eval_time_s", "local_samples")
+
+# Chaves tratadas pelo máximo. O tempo de parede de um round depende do cliente
+# mais lento, não da soma: os clientes treinam em paralelo. Com partições de
+# tamanhos muito desiguais, a soma e o máximo contam histórias diferentes.
+CHAVES_MAXIMAS = ("train_time_max_s",)
 
 # Acurácia a partir da qual o modelo global é considerado convergido, usada
 # para medir eficiência de comunicação.
 ALVO_CONVERGENCIA = 0.95
 
-# Alvos reportados nos relatórios. O alvo frouxo serve de verificação — todas as
-# estratégias devem alcançá-lo de imediato neste dataset, e uma que não alcance
-# tem problema de implementação. O alvo exigido fica logo abaixo do teto
-# centralizado e é o que de fato separa as estratégias.
+# Alvos reportados nos relatórios, expressos como **fração do teto centralizado**
+# do próprio dataset, não como acurácia absoluta.
+#
+# A razão é que acurácia absoluta não transfere entre datasets. No dataset de
+# produtividade o teto é 0,993 e um alvo de 0,99 é exigente mas alcançável; no
+# PISA o teto é 0,719, e o mesmo 0,99 absoluto seria inalcançável por qualquer
+# estratégia — a coluna inteira diria "não atingido" e não mediria nada.
+#
+# Como fração do teto, 0,95 e 0,99 significam "chegou a 95% / 99% do que o
+# treino centralizado alcança", que é a pergunta de interesse em federated
+# learning: quão perto do ideal centralizado se chega, e em quantos rounds.
+FRACOES_DO_TETO = (0.95, 0.99)
+
+# Mantido para execuções sem teto conhecido, onde os alvos recaem em acurácia
+# absoluta.
 ALVOS_RELATORIO = (0.95, 0.99)
 
 
@@ -65,6 +82,8 @@ def aggregate(records: list[RecordDict], weighting_metric_name: str) -> MetricRe
         valores = [float(m[chave]) for m in por_cliente if chave in m]
         if chave in CHAVES_SOMADAS:
             agregado[chave] = float(sum(valores))
+        elif chave in CHAVES_MAXIMAS:
+            agregado[chave] = float(max(valores))
         else:
             relevantes = [p for m, p in zip(por_cliente, pesos) if chave in m]
             agregado[chave] = _media_ponderada(valores, relevantes)
@@ -99,14 +118,35 @@ def curva_central(run: dict) -> dict[int, float]:
     return {int(linha["round"]): float(linha["central_accuracy"]) for linha in run["rounds"]}
 
 
-def rounds_por_alvo(run: dict, alvos=ALVOS_RELATORIO) -> dict[float, int | None]:
+def alvos_absolutos(run: dict, teto: float | None = None) -> dict[float, float]:
+    """Traduz as frações do teto em acurácias absolutas.
+
+    Sem teto informado, a fração é usada diretamente como acurácia — o
+    comportamento anterior, preservado para execuções sem baseline disponível.
+    """
+    if teto is None or math.isnan(teto) or teto <= 0:
+        return {f: f for f in FRACOES_DO_TETO}
+    return {f: f * teto for f in FRACOES_DO_TETO}
+
+
+def rounds_por_alvo(
+    run: dict, alvos=None, teto: float | None = None
+) -> dict[float, int | None]:
     """Rounds necessários para atingir cada alvo, calculados da curva salva.
 
     Derivar isto da curva, e não de um único valor registrado na execução,
-    permite reavaliar a eficiência com outros alvos sem repetir o benchmark.
+    permite reavaliar a eficiência com outros alvos — ou outro teto — sem
+    repetir o benchmark.
+
+    As chaves do retorno são as **frações do teto** (0,95 e 0,99), de modo que
+    os relatórios possam rotular as colunas de forma consistente entre datasets
+    com tetos muito diferentes.
     """
     curva = curva_central(run)
-    return {alvo: rounds_to_target(curva, alvo) for alvo in alvos}
+    if alvos is not None:
+        return {alvo: rounds_to_target(curva, alvo) for alvo in alvos}
+    absolutos = alvos_absolutos(run, teto)
+    return {fracao: rounds_to_target(curva, valor) for fracao, valor in absolutos.items()}
 
 
 def _media_desvio(valores: list[float]) -> tuple[float, float]:
@@ -118,7 +158,7 @@ def _media_desvio(valores: list[float]) -> tuple[float, float]:
     return media, desvio
 
 
-def resumo_repeticoes(runs: list[dict], alvos=ALVOS_RELATORIO) -> dict:
+def resumo_repeticoes(runs: list[dict], alvos=None, teto: float | None = None) -> dict:
     """Agrega as repetições de uma mesma configuração em média e dispersão.
 
     A agregação dos pesos no servidor não é reproduzível bit a bit — a ordem de
@@ -145,8 +185,9 @@ def resumo_repeticoes(runs: list[dict], alvos=ALVOS_RELATORIO) -> dict:
         resumo[campo] = media
         resumo[f"{campo}_spread"] = desvio
 
-    for alvo in alvos:
-        rodadas = [rounds_por_alvo(r, (alvo,))[alvo] for r in runs]
+    fracoes = alvos if alvos is not None else FRACOES_DO_TETO
+    for alvo in fracoes:
+        rodadas = [rounds_por_alvo(r, teto=teto).get(alvo) for r in runs]
         atingidos = [r for r in rodadas if r is not None]
         chave = f"rounds_to_{int(alvo * 100)}"
         if len(atingidos) < len(rodadas):

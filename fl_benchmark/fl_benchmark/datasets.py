@@ -77,6 +77,15 @@ class DatasetSpec:
     csv_filename: str
     features: list[str]
     target_column: str
+    # "csv": um arquivo plano, alvo derivado na carga.
+    # "preparado": diretório já limpo, normalizado e dividido por cliente,
+    # produzido por um script de preparação. Datasets grandes exigem isso: na
+    # simulação cada cliente é um processo próprio, e repetir limpeza e
+    # normalização em todos eles a cada round domina o custo.
+    kind: str = "csv"
+    # Coluna que identifica a unidade federada quando a partição é lida dos
+    # dados em vez de sorteada (regime "natural").
+    group_column: str | None = None
     # Coluna contínua é binarizada pela mediana, o que garante classes
     # equilibradas sem escolher um limiar arbitrário.
     binarize_by_median: bool = True
@@ -109,19 +118,62 @@ PRODUCTIVITY = DatasetSpec(
         "Alvo: produtividade acima da mediana."
     ),
     notes=[
-        "O alvo `productivity_score` é uma função linear exata de 6 das 14 features "
-        "(study_hours_per_day, focus_score, sleep_hours, phone_usage_hours, "
-        "stress_level, attendance_percentage): uma regressão linear sobre o conjunto "
-        "atinge R² = 1,0000.",
-        "As 8 features restantes têm coeficiente zero — são ruído e foram mantidas de "
-        "propósito, pois saber ignorá-las faz parte do que o benchmark mede.",
-        "Como consequência, o problema é linearmente separável e qualquer estratégia "
-        "satura perto de 100% de acurácia no regime IID. A comparação entre estratégias "
-        "se dá no regime non-IID e nas métricas de eficiência.",
+        "As features são observações de estudantes, mas o alvo `productivity_score` "
+        "não é uma medição: é uma coluna **derivada por fórmula** a partir de 6 das 14 "
+        "features (study_hours_per_day, focus_score, sleep_hours, phone_usage_hours, "
+        "stress_level, attendance_percentage). Por isso uma regressão linear sobre o "
+        "conjunto atinge R² = 1,0000 — o alvo é, por construção, função exata delas.",
+        "As 8 features restantes não entram na fórmula do alvo e têm coeficiente zero "
+        "no modelo — foram mantidas de propósito, pois saber ignorá-las faz parte do "
+        "que o benchmark mede.",
+        "Como o alvo é derivado, o problema é linearmente separável e qualquer "
+        "estratégia satura perto de 100% de acurácia no regime IID. A comparação entre "
+        "estratégias se dá no regime non-IID e nas métricas de eficiência.",
     ],
 )
 
-DATASETS: dict[str, DatasetSpec] = {PRODUCTIVITY.name: PRODUCTIVITY}
+PISA_FEATURES = (
+    [f"ST326Q0{i}JA" for i in range(1, 7)]
+    + ["ST322Q01JA", "ST322Q02JA", "ST322Q06JA", "ST322Q07JA", "ST296Q04JA", "ST097Q06DA"]
+    + ["ESCS", "HOMEPOS", "ICTRES", "BELONG", "BULLIED"]
+)
+
+PISA = DatasetSpec(
+    name="pisa",
+    csv_filename="pisa_preparado",
+    features=PISA_FEATURES,
+    target_column="acima_mediana",
+    binarize_by_median=False,
+    kind="preparado",
+    group_column="CNT",
+    description=(
+        "PISA 2025, questionário do estudante: uso de recursos digitais, autocontrole "
+        "digital, contexto socioeconômico e desempenho em matemática. "
+        "Alvo: nota acima da mediana global."
+    ),
+    notes=[
+        "Os dados de origem foram extraídos com `user_missing=True`, que preserva os "
+        "códigos de ausência do SPSS em vez de convertê-los em nulo. Valores como 97 "
+        "(não aplicável) e 99 (sem resposta) constavam como medições, e `isna()` "
+        "reportava zero nulos. Sem a limpeza, a correlação de ESCS com o desempenho "
+        "aparece como -0,150 quando na verdade é +0,404 — sinal invertido.",
+        "A amostra efetiva é de 303.681 dos 755.721 registros, por exigir as 17 features "
+        "e a nota presentes. A perda não é aleatória: países que não aplicaram partes do "
+        "questionário saem, o que altera a composição da amostra.",
+        "O alvo é a média das dez plausible values de matemática. Elas não são dez notas, "
+        "mas dez imputações da mesma proficiência latente; usar a média subestima o erro "
+        "de medida, o que o procedimento da OCDE trata com análise múltipla.",
+        "O peso amostral `W_FSTUWT` não é utilizado. Os resultados comparam estratégias "
+        "de agregação federada e não constituem estimativas populacionais nacionais.",
+        "A normalização é global, ajustada no conjunto de treino. Em federated learning "
+        "estrito, estatísticas globais exigiriam um round prévio de agregação.",
+    ],
+)
+
+DATASETS: dict[str, DatasetSpec] = {
+    PRODUCTIVITY.name: PRODUCTIVITY,
+    PISA.name: PISA,
+}
 
 # Cache em nível de módulo: numa simulação os clientes compartilham o processo,
 # então o CSV é lido e normalizado uma única vez por execução.
@@ -149,6 +201,10 @@ def load(name: str) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         return _CACHE[name]
 
     spec = get_spec(name)
+    if spec.kind == "preparado":
+        _CACHE[name] = _load_preparado(spec)
+        return _CACHE[name]
+
     df = pd.read_csv(resolve_csv(spec.csv_filename))
 
     faltando = [c for c in [*spec.features, spec.target_column] if c not in df.columns]
@@ -186,3 +242,79 @@ def repo_root() -> Path:
     """
     qualquer_spec = next(iter(DATASETS.values()))
     return resolve_csv(qualquer_spec.csv_filename).resolve().parent.parent
+
+
+def resolve_dir(nome: str) -> Path:
+    """Localiza um diretório de dados, com a mesma busca aplicada aos CSVs."""
+    procurados = []
+    for candidato in _candidatos(nome):
+        if candidato not in procurados:
+            procurados.append(candidato)
+        if candidato.is_dir():
+            return candidato
+    locais = "\n  ".join(str(p) for p in procurados)
+    raise FileNotFoundError(
+        f"diretório {nome!r} não encontrado. Locais verificados:\n  {locais}\n"
+        f"Para o PISA, execute `python preparar_pisa.py` antes de treinar."
+    )
+
+
+# Grupos do conjunto de treino, por dataset. Preenchido junto com o cache de
+# dados, para que a partição natural possa ser montada sem reler os arquivos.
+_GRUPOS: dict[str, np.ndarray] = {}
+
+
+def _load_preparado(spec: DatasetSpec):
+    """Carrega um dataset já preparado: um arquivo por cliente mais o teste central.
+
+    O treino é a concatenação dos arquivos de cliente, na ordem alfabética dos
+    nomes — o que torna a composição reproduzível. A coluna de agrupamento é
+    preservada em `_GRUPOS` para alimentar o regime de partição natural.
+    """
+    base = resolve_dir(spec.csv_filename)
+    pasta_clientes = base / "clientes"
+    teste_path = base / "teste_central.parquet"
+
+    if not pasta_clientes.is_dir() or not teste_path.is_file():
+        raise FileNotFoundError(
+            f"diretório {base} incompleto: esperados 'clientes/' e 'teste_central.parquet'. "
+            f"Execute `python preparar_pisa.py`."
+        )
+
+    arquivos = sorted(pasta_clientes.glob("*.parquet"))
+    if not arquivos:
+        raise FileNotFoundError(f"nenhum arquivo de cliente em {pasta_clientes}")
+
+    colunas = spec.features + [spec.target_column] + (
+        [spec.group_column] if spec.group_column else []
+    )
+    treino = pd.concat(
+        [pd.read_parquet(a, columns=colunas) for a in arquivos], ignore_index=True
+    )
+    teste = pd.read_parquet(teste_path, columns=colunas)
+
+    X_train = treino[spec.features].to_numpy(dtype=np.float32)
+    y_train = treino[spec.target_column].to_numpy(dtype=np.float32)
+    X_test = teste[spec.features].to_numpy(dtype=np.float32)
+    y_test = teste[spec.target_column].to_numpy(dtype=np.float32)
+
+    if spec.group_column:
+        _GRUPOS[spec.name] = treino[spec.group_column].to_numpy()
+
+    return X_train, y_train, X_test, y_test
+
+
+def group_labels(name: str) -> np.ndarray:
+    """Rótulos de grupo do conjunto de treino, para a partição natural."""
+    spec = get_spec(name)
+    if not spec.group_column:
+        raise ValueError(
+            f"dataset {name!r} não declara `group_column`; partição natural indisponível"
+        )
+    if name not in _GRUPOS:
+        load(name)
+    return _GRUPOS[name]
+
+
+def has_groups(name: str) -> bool:
+    return get_spec(name).group_column is not None

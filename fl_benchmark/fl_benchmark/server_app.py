@@ -6,6 +6,7 @@ centralizada por round, medição de tempo e gravação dos relatórios. A lógi
 cada método federado vive em `strategies/<nome>.py`.
 """
 
+import math
 import time
 
 import torch
@@ -51,6 +52,7 @@ def _config(context: Context) -> dict:
 def main(grid: Grid, context: Context) -> None:
     cfg = _config(context)
     modulo = strategies.get(cfg["strategy"])
+    inicio_setup = time.perf_counter()
 
     torch.manual_seed(cfg["seed"])
 
@@ -61,7 +63,8 @@ def main(grid: Grid, context: Context) -> None:
 
     # Registrado no relatório para documentar o desbalanceamento efetivo da
     # execução, em vez de apenas o valor nominal de alpha.
-    particoes = partition.build(
+    particoes = partition.build_for(
+        nome_dataset,
         y_train,
         num_partitions=cfg["num-clients"],
         regime=cfg["partition"],
@@ -69,6 +72,8 @@ def main(grid: Grid, context: Context) -> None:
         seed=cfg["seed"],
     )
     resumo_particao = partition.skew_summary(partition.class_matrix(y_train, particoes))
+    if cfg["partition"] == "natural":
+        resumo_particao["group_names"] = partition.group_names(datasets.group_labels(nome_dataset))
 
     modelo_global = MLP(datasets.num_features(nome_dataset))
     arrays = ArrayRecord(modelo_global.state_dict())
@@ -77,9 +82,13 @@ def main(grid: Grid, context: Context) -> None:
 
     def avaliar_centralizado(server_round: int, arrays: ArrayRecord) -> MetricRecord:
         """Avalia o modelo global no conjunto de teste que nenhum cliente viu."""
+        inicio_avaliacao = time.perf_counter()
         modelo = MLP(datasets.num_features(nome_dataset))
         modelo.load_state_dict(arrays.to_torch_state_dict())
         resultado = engine.evaluate(modelo, loader_teste, device)
+        # Inclui a construção do modelo e a carga dos pesos, não apenas o laço
+        # de inferência: é o custo real que a avaliação central impõe ao round.
+        resultado["central_eval_total_s"] = time.perf_counter() - inicio_avaliacao
         avaliacoes_centrais[server_round] = resultado
         return MetricRecord(
             {
@@ -92,6 +101,7 @@ def main(grid: Grid, context: Context) -> None:
 
     estrategia = modulo.build(cfg)
 
+    duracao_setup = time.perf_counter() - inicio_setup
     rotulo_device = engine.device_label(device)
     print(
         f"\n>>> estrategia: {modulo.TITLE} | particao: {cfg['partition']} "
@@ -116,6 +126,7 @@ def main(grid: Grid, context: Context) -> None:
         avaliacoes_centrais=avaliacoes_centrais,
         resumo_particao=resumo_particao,
         wall_clock=wall_clock,
+        duracao_setup=duracao_setup,
     )
 
 
@@ -128,6 +139,7 @@ def _registrar(
     avaliacoes_centrais: dict[int, dict],
     resumo_particao: dict,
     wall_clock: float,
+    duracao_setup: float,
 ) -> None:
     """Consolida as métricas da execução e grava os relatórios."""
     treino = resultado.train_metrics_clientapp
@@ -148,6 +160,9 @@ def _registrar(
 
         tempo = float(metricas_treino.get("train_time_s", 0.0))
         tempo_treino_total += tempo
+        tempo_cliente_mais_lento = float(metricas_treino.get("train_time_max_s", indefinido))
+        tempo_avaliacao_clientes = float(metricas_federadas.get("eval_time_s", indefinido))
+        tempo_avaliacao_central = float(central.get("central_eval_total_s", indefinido))
 
         linhas.append(
             {
@@ -167,6 +182,9 @@ def _registrar(
                 "federated_auc": float(metricas_federadas.get("auc", indefinido)),
                 "train_loss": float(metricas_treino.get("train_loss", indefinido)),
                 "train_time_s": tempo,
+                "train_time_slowest_client_s": tempo_cliente_mais_lento,
+                "eval_time_clients_s": tempo_avaliacao_clientes,
+                "eval_time_central_s": tempo_avaliacao_central,
             }
         )
 
@@ -191,11 +209,7 @@ def _registrar(
             "federated_accuracy_std": ultima["federated_accuracy_std"],
             "federated_accuracy_min": ultima["federated_accuracy_min"],
         },
-        timing={
-            "train_effective_s": tempo_treino_total,
-            "wall_clock_s": wall_clock,
-            "mean_round_s": wall_clock / len(linhas) if linhas else indefinido,
-        },
+        timing=_resumo_tempos(linhas, tempo_treino_total, wall_clock, duracao_setup),
         convergence={
             "target": alvo,
             "rounds_to_target": metrics.rounds_to_target(curva_central, alvo),
@@ -210,3 +224,36 @@ def _registrar(
         f"treino efetivo {tempo_treino_total:.2f}s | "
         f"wall-clock {wall_clock:.2f}s\n"
     )
+
+
+def _resumo_tempos(
+    linhas: list[dict], tempo_treino_total: float, wall_clock: float, duracao_setup: float
+) -> dict:
+    """Consolida os tempos da execução.
+
+    `train_effective_s` é o custo computacional agregado do treino; já
+    `train_slowest_total_s` soma, por round, apenas o cliente mais lento, e é a
+    parcela do tempo de parede que o treino de fato impõe, dado que os clientes
+    treinam em paralelo. A diferença entre os dois cresce com a desigualdade de
+    tamanho entre as partições.
+
+    `setup_s` cobre carga do dataset, construção da partição e do modelo inicial
+    — tudo o que antecede o primeiro round. Em datasets grandes deixa de ser
+    desprezível, e sem medi-lo o custo por execução fica subestimado.
+    """
+
+    def soma(chave: str) -> float:
+        valores = [
+            float(l[chave]) for l in linhas if not math.isnan(float(l.get(chave, float("nan"))))
+        ]
+        return float(sum(valores)) if valores else float("nan")
+
+    return {
+        "train_effective_s": tempo_treino_total,
+        "train_slowest_total_s": soma("train_time_slowest_client_s"),
+        "eval_clients_total_s": soma("eval_time_clients_s"),
+        "eval_central_total_s": soma("eval_time_central_s"),
+        "setup_s": duracao_setup,
+        "wall_clock_s": wall_clock,
+        "mean_round_s": wall_clock / len(linhas) if linhas else float("nan"),
+    }

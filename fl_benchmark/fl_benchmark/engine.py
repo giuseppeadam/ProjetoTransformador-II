@@ -159,7 +159,7 @@ def train(
 
 @torch.no_grad()
 def evaluate(net: nn.Module, loader: DataLoader, device: torch.device) -> dict[str, float]:
-    """Avalia `net` e devolve perda, acurácia, F1 e ROC-AUC.
+    """Avalia `net` e devolve perda, acurácia, F1, ROC-AUC e o tempo gasto.
 
     O F1 acompanha a acurácia porque a partição non-IID desbalanceia as classes
     dentro de cada cliente, e a acurácia sozinha esconde o caso em que o modelo
@@ -174,6 +174,10 @@ def evaluate(net: nn.Module, loader: DataLoader, device: torch.device) -> dict[s
     net.eval()
     criterion = nn.BCEWithLogitsLoss(reduction="sum")
 
+    if device.type == "cuda":
+        torch.cuda.synchronize(device)
+    inicio = time.perf_counter()
+
     soma_loss, total = 0.0, 0
     probabilidades: list[np.ndarray] = []
     verdadeiros: list[np.ndarray] = []
@@ -186,6 +190,10 @@ def evaluate(net: nn.Module, loader: DataLoader, device: torch.device) -> dict[s
         total += y_batch.numel()
         probabilidades.append(torch.sigmoid(logits).cpu().numpy().ravel())
         verdadeiros.append(y_batch.cpu().numpy().ravel())
+
+    if device.type == "cuda":
+        torch.cuda.synchronize(device)
+    duracao = time.perf_counter() - inicio
 
     y_prob = np.concatenate(probabilidades)
     y_true = np.concatenate(verdadeiros)
@@ -202,4 +210,5 @@ def evaluate(net: nn.Module, loader: DataLoader, device: torch.device) -> dict[s
         "f1": float(f1_score(y_true, y_pred, zero_division=0)),
         "auc": auc,
         "num_examples": int(total),
+        "eval_time_s": duracao,
     }

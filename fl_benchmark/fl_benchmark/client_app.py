@@ -26,7 +26,8 @@ def _contexto_local(context: Context):
     nome_dataset = str(cfg["dataset"])
 
     X_train, y_train, _, _ = datasets.load(nome_dataset)
-    particoes = partition.build(
+    particoes = partition.build_for(
+        nome_dataset,
         y_train,
         num_partitions=int(context.node_config["num-partitions"]),
         regime=str(cfg["partition"]),
@@ -87,6 +88,8 @@ def train(msg: Message, context: Context) -> Message:
                 {
                     "train_loss": loss,
                     "train_time_s": duracao,
+                    "train_time_max_s": duracao,
+                    "local_samples": float(len(X_tr)),
                     "num-examples": float(len(X_tr)),
                 }
             ),
@@ -111,6 +114,7 @@ def evaluate(msg: Message, context: Context) -> Message:
                     "accuracy": resultado["accuracy"],
                     "f1": resultado["f1"],
                     "auc": resultado["auc"],
+                    "eval_time_s": resultado["eval_time_s"],
                     "num-examples": float(resultado["num_examples"]),
                 }
             )

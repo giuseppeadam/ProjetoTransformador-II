@@ -86,7 +86,9 @@ def main() -> None:
 
     destino = report.results_dir()
     destino.mkdir(parents=True, exist_ok=True)
-    caminho = destino / "baseline.json"
+    # Um arquivo por dataset: o teto de referência é propriedade do dataset, e
+    # um nome fixo faria a execução de um sobrescrever o teto do outro.
+    caminho = destino / f"baseline_{args.dataset}.json"
     with caminho.open("w", encoding="utf-8") as arquivo:
         json.dump(registro, arquivo, indent=2, ensure_ascii=False)
 

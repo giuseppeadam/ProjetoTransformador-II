@@ -1,0 +1,434 @@
+{
+  "origem": "pisa_reduzido.parquet",
+  "features": [
+    "ST326Q01JA",
+    "ST326Q02JA",
+    "ST326Q03JA",
+    "ST326Q04JA",
+    "ST326Q05JA",
+    "ST326Q06JA",
+    "ST322Q01JA",
+    "ST322Q02JA",
+    "ST322Q06JA",
+    "ST322Q07JA",
+    "ST296Q04JA",
+    "ST097Q06DA",
+    "ESCS",
+    "HOMEPOS",
+    "ICTRES",
+    "BELONG",
+    "BULLIED"
+  ],
+  "target": "acima_mediana",
+  "target_definicao": "media das 10 plausible values de matematica, binarizada pela mediana global",
+  "mediana_global": 436.21,
+  "normalizacao": {
+    "tipo": "global, ajustada no conjunto de treino",
+    "ressalva": "em federated learning estrito, estatisticas globais exigiriam um round previo de agregacao; simplificacao documentada em ESTRATEGIA_PISA.md",
+    "media": {
+      "ST326Q01JA": 2.9775874275553216,
+      "ST326Q02JA": 2.693970626975764,
+      "ST326Q03JA": 2.97074634483667,
+      "ST326Q04JA": 2.382038659114858,
+      "ST326Q05JA": 3.4757269164910434,
+      "ST326Q06JA": 4.83632030426765,
+      "ST322Q01JA": 3.7448383166491044,
+      "ST322Q02JA": 3.5112659707586933,
+      "ST322Q06JA": 2.6255886130136985,
+      "ST322Q07JA": 2.516172451264489,
+      "ST296Q04JA": 3.1010809075342465,
+      "ST097Q06DA": 3.1196777858271867,
+      "ESCS": -0.32793870813141185,
+      "HOMEPOS": -0.48190934832894594,
+      "ICTRES": -0.4148981513838375,
+      "BELONG": 0.06497719568757837,
+      "BULLIED": -0.10153245558696045
+    },
+    "escala": {
+      "ST326Q01JA": 1.9267796272662885,
+      "ST326Q02JA": 1.6182327819426405,
+      "ST326Q03JA": 1.894996424337598,
+      "ST326Q04JA": 1.7598564268595147,
+      "ST326Q05JA": 2.205518823729592,
+      "ST326Q06JA": 2.7537094346683393,
+      "ST322Q01JA": 1.7190041150208972,
+      "ST322Q02JA": 1.7037149143452421,
+      "ST322Q06JA": 1.8356419044760355,
+      "ST322Q07JA": 1.6980196706615238,
+      "ST296Q04JA": 1.5081621629646154,
+      "ST097Q06DA": 0.994622903573662,
+      "ESCS": 1.1748714075809796,
+      "HOMEPOS": 1.2538918688873495,
+      "ICTRES": 1.3099272900153083,
+      "BELONG": 0.9546464568544517,
+      "BULLIED": 0.9480116205731592
+    }
+  },
+  "linhas": {
+    "origem": 755721,
+    "completas": 303681,
+    "treino": 242944,
+    "teste_central": 60737
+  },
+  "seed": 42,
+  "test_size": 0.2,
+  "min_alunos": 200,
+  "paises_descartados": [],
+  "invalidos_por_feature_pct": {
+    "ST326Q01JA": 14.38,
+    "ST326Q02JA": 15.11,
+    "ST326Q03JA": 15.43,
+    "ST326Q04JA": 15.74,
+    "ST326Q05JA": 15.9,
+    "ST326Q06JA": 16.02,
+    "ST322Q01JA": 14.81,
+    "ST322Q02JA": 14.7,
+    "ST322Q06JA": 15.41,
+    "ST322Q07JA": 16.36,
+    "ST296Q04JA": 17.13,
+    "ST097Q06DA": 12.43,
+    "ESCS": 9.88,
+    "HOMEPOS": 4.34,
+    "ICTRES": 36.4,
+    "BELONG": 10.55,
+    "BULLIED": 6.27
+  },
+  "clientes": [
+    {
+      "pais": "DOM",
+      "alunos": 2908,
+      "fracao_acima_mediana": 0.09009999781847,
+      "nota_media": 359.7,
+      "escolas": 244
+    },
+    {
+      "pais": "PRY",
+      "alunos": 2431,
+      "fracao_acima_mediana": 0.11479999870061874,
+      "nota_media": 365.6,
+      "escolas": 256
+    },
+    {
+      "pais": "MAR",
+      "alunos": 3145,
+      "fracao_acima_mediana": 0.11760000139474869,
+      "nota_media": 358.2,
+      "escolas": 178
+    },
+    {
+      "pais": "KEN",
+      "alunos": 1819,
+      "fracao_acima_mediana": 0.12919999659061432,
+      "nota_media": 362.9,
+      "escolas": 233
+    },
+    {
+      "pais": "PSE",
+      "alunos": 4461,
+      "fracao_acima_mediana": 0.14569999277591705,
+      "nota_media": 372.7,
+      "escolas": 309
+    },
+    {
+      "pais": "KSV",
+      "alunos": 2646,
+      "fracao_acima_mediana": 0.14589999616146088,
+      "nota_media": 371.7,
+      "escolas": 186
+    },
+    {
+      "pais": "ECU",
+      "alunos": 5757,
+      "fracao_acima_mediana": 0.163100004196167,
+      "nota_media": 380.2,
+      "escolas": 265
+    },
+    {
+      "pais": "IDN",
+      "alunos": 9188,
+      "fracao_acima_mediana": 0.18299999833106995,
+      "nota_media": 384.8,
+      "escolas": 418
+    },
+    {
+      "pais": "MEX",
+      "alunos": 5174,
+      "fracao_acima_mediana": 0.2468000054359436,
+      "nota_media": 397.0,
+      "escolas": 287
+    },
+    {
+      "pais": "PHL",
+      "alunos": 5361,
+      "fracao_acima_mediana": 0.2583000063896179,
+      "nota_media": 393.5,
+      "escolas": 208
+    },
+    {
+      "pais": "BRA",
+      "alunos": 13857,
+      "fracao_acima_mediana": 0.26510000228881836,
+      "nota_media": 394.4,
+      "escolas": 997
+    },
+    {
+      "pais": "JOR",
+      "alunos": 4382,
+      "fracao_acima_mediana": 0.28299999237060547,
+      "nota_media": 402.4,
+      "escolas": 275
+    },
+    {
+      "pais": "MYS",
+      "alunos": 5248,
+      "fracao_acima_mediana": 0.290800005197525,
+      "nota_media": 404.5,
+      "escolas": 157
+    },
+    {
+      "pais": "COL",
+      "alunos": 4116,
+      "fracao_acima_mediana": 0.2939999997615814,
+      "nota_media": 403.0,
+      "escolas": 255
+    },
+    {
+      "pais": "SAU",
+      "alunos": 3876,
+      "fracao_acima_mediana": 0.2957000136375427,
+      "nota_media": 404.0,
+      "escolas": 203
+    },
+    {
+      "pais": "PER",
+      "alunos": 3812,
+      "fracao_acima_mediana": 0.29750001430511475,
+      "nota_media": 401.5,
+      "escolas": 245
+    },
+    {
+      "pais": "ARM",
+      "alunos": 925,
+      "fracao_acima_mediana": 0.3395000100135803,
+      "nota_media": 411.0,
+      "escolas": 211
+    },
+    {
+      "pais": "ARG",
+      "alunos": 4492,
+      "fracao_acima_mediana": 0.399399995803833,
+      "nota_media": 418.5,
+      "escolas": 392
+    },
+    {
+      "pais": "THA",
+      "alunos": 5802,
+      "fracao_acima_mediana": 0.40610000491142273,
+      "nota_media": 428.1,
+      "escolas": 269
+    },
+    {
+      "pais": "MNE",
+      "alunos": 3526,
+      "fracao_acima_mediana": 0.4375999867916107,
+      "nota_media": 426.6,
+      "escolas": 68
+    },
+    {
+      "pais": "MDA",
+      "alunos": 3741,
+      "fracao_acima_mediana": 0.4399999976158142,
+      "nota_media": 427.1,
+      "escolas": 270
+    },
+    {
+      "pais": "CHL",
+      "alunos": 3455,
+      "fracao_acima_mediana": 0.453000009059906,
+      "nota_media": 429.4,
+      "escolas": 208
+    },
+    {
+      "pais": "MNG",
+      "alunos": 4830,
+      "fracao_acima_mediana": 0.4562999904155731,
+      "nota_media": 430.1,
+      "escolas": 190
+    },
+    {
+      "pais": "URY",
+      "alunos": 2886,
+      "fracao_acima_mediana": 0.4625999927520752,
+      "nota_media": 429.8,
+      "escolas": 219
+    },
+    {
+      "pais": "QAT",
+      "alunos": 3332,
+      "fracao_acima_mediana": 0.4823000133037567,
+      "nota_media": 436.5,
+      "escolas": 242
+    },
+    {
+      "pais": "GEO",
+      "alunos": 3090,
+      "fracao_acima_mediana": 0.503600001335144,
+      "nota_media": 439.5,
+      "escolas": 261
+    },
+    {
+      "pais": "SRB",
+      "alunos": 3595,
+      "fracao_acima_mediana": 0.5056999921798706,
+      "nota_media": 438.6,
+      "escolas": 177
+    },
+    {
+      "pais": "BRN",
+      "alunos": 3647,
+      "fracao_acima_mediana": 0.5116999745368958,
+      "nota_media": 443.7,
+      "escolas": 55
+    },
+    {
+      "pais": "ALB",
+      "alunos": 3772,
+      "fracao_acima_mediana": 0.5138000249862671,
+      "nota_media": 440.7,
+      "escolas": 160
+    },
+    {
+      "pais": "BGR",
+      "alunos": 2743,
+      "fracao_acima_mediana": 0.5217000246047974,
+      "nota_media": 444.1,
+      "escolas": 199
+    },
+    {
+      "pais": "VNM",
+      "alunos": 5115,
+      "fracao_acima_mediana": 0.5230000019073486,
+      "nota_media": 448.2,
+      "escolas": 195
+    },
+    {
+      "pais": "ROU",
+      "alunos": 4866,
+      "fracao_acima_mediana": 0.5493000149726868,
+      "nota_media": 451.2,
+      "escolas": 303
+    },
+    {
+      "pais": "AZE",
+      "alunos": 3195,
+      "fracao_acima_mediana": 0.5623999834060669,
+      "nota_media": 457.2,
+      "escolas": 230
+    },
+    {
+      "pais": "TUR",
+      "alunos": 5322,
+      "fracao_acima_mediana": 0.6215999722480774,
+      "nota_media": 473.6,
+      "escolas": 202
+    },
+    {
+      "pais": "ARE",
+      "alunos": 20712,
+      "fracao_acima_mediana": 0.631600022315979,
+      "nota_media": 470.8,
+      "escolas": 1066
+    },
+    {
+      "pais": "ISR",
+      "alunos": 2509,
+      "fracao_acima_mediana": 0.6377000212669373,
+      "nota_media": 470.1,
+      "escolas": 173
+    },
+    {
+      "pais": "SVN",
+      "alunos": 4502,
+      "fracao_acima_mediana": 0.640999972820282,
+      "nota_media": 467.7,
+      "escolas": 312
+    },
+    {
+      "pais": "MLT",
+      "alunos": 1934,
+      "fracao_acima_mediana": 0.6412000060081482,
+      "nota_media": 469.7,
+      "escolas": 1
+    },
+    {
+      "pais": "HUN",
+      "alunos": 4455,
+      "fracao_acima_mediana": 0.6559000015258789,
+      "nota_media": 470.7,
+      "escolas": 255
+    },
+    {
+      "pais": "NOR",
+      "alunos": 3522,
+      "fracao_acima_mediana": 0.6678000092506409,
+      "nota_media": 474.8,
+      "escolas": 278
+    },
+    {
+      "pais": "LUX",
+      "alunos": 3317,
+      "fracao_acima_mediana": 0.6924999952316284,
+      "nota_media": 484.1,
+      "escolas": 1
+    },
+    {
+      "pais": "ESP",
+      "alunos": 17278,
+      "fracao_acima_mediana": 0.6929000020027161,
+      "nota_media": 475.2,
+      "escolas": 944
+    },
+    {
+      "pais": "CAN",
+      "alunos": 12543,
+      "fracao_acima_mediana": 0.765500009059906,
+      "nota_media": 499.3,
+      "escolas": 884
+    },
+    {
+      "pais": "NZL",
+      "alunos": 2647,
+      "fracao_acima_mediana": 0.7883999943733215,
+      "nota_media": 510.0,
+      "escolas": 132
+    },
+    {
+      "pais": "HKG",
+      "alunos": 4509,
+      "fracao_acima_mediana": 0.8209999799728394,
+      "nota_media": 526.6,
+      "escolas": 230
+    },
+    {
+      "pais": "TAP",
+      "alunos": 5434,
+      "fracao_acima_mediana": 0.8346999883651733,
+      "nota_media": 546.6,
+      "escolas": 291
+    },
+    {
+      "pais": "MAC",
+      "alunos": 3709,
+      "fracao_acima_mediana": 0.8978000283241272,
+      "nota_media": 553.0,
+      "escolas": 1
+    },
+    {
+      "pais": "QCI",
+      "alunos": 9358,
+      "fracao_acima_mediana": 0.9663000106811523,
+      "nota_media": 620.6,
+      "escolas": 374
+    }
+  ]
+}

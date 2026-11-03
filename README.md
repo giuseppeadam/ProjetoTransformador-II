@@ -1,24 +1,120 @@
 # ProjetoTransformador II
 
-Classificação de hábitos digitais de estudantes, desenvolvida em três etapas que
-compartilham o mesmo problema e mudam a forma de resolvê-lo.
+Classificação de desempenho e hábitos digitais de estudantes, desenvolvida em
+quatro etapas que compartilham o mesmo problema e mudam a forma de resolvê-lo.
 
 | Etapa | O que faz | Onde está |
 |---|---|---|
 | 1 — Modelos clássicos | Bagging, Gradient Boosting, Decision Tree, Random Forest, SVM, KNN e Voting sobre o dataset de vício digital | `dataset.ipynb` |
 | 2 — Federated Learning | Primeira implementação federada com Flower, uma estratégia selecionável por configuração | `fl_addiction/` |
 | 3 — Benchmark de estratégias | Cinco estratégias federadas comparadas em dois regimes de partição, com métricas e relatórios por estratégia | `fl_benchmark/` |
+| 4 — Heterogeneidade real | O mesmo benchmark sobre o PISA 2025: 303.681 alunos e **48 países como clientes reais**, em vez de partições sorteadas | `fl_benchmark/` |
 
-O comparativo consolidado da etapa 3 está em
-[`fl_benchmark/results/README.md`](fl_benchmark/results/README.md), e cada
-estratégia tem seu próprio relatório ao lado dele. O resultado principal: sob
-dados heterogêneos, **FedProx foi a única das cinco a alcançar 99% de acurácia em
-todas as sementes**, em 3,3 ± 1,2 rounds. As demais atingiram o alvo em parte das
-sementes ou em nenhuma, dentro dos 10 rounds executados.
+Os comparativos ficam em [`fl_benchmark/results/`](fl_benchmark/results/), um por
+dataset, cada um com o relatório detalhado das cinco estratégias ao lado.
 
-A etapa 2 continua no repositório como registro da primeira implementação, e roda
-sobre o dataset de vício digital (`dataset_novo_indice.csv`). A etapa 3 é
-independente dela e usa o dataset de produtividade em `archive/`.
+---
+
+## Overview dos resultados
+
+Sessenta execuções: cinco estratégias × dois regimes de partição × três sementes,
+em dois datasets.
+
+### Os dois datasets
+
+| | Produtividade (etapa 3) | PISA 2025 (etapa 4) |
+|---|---|---|
+| Linhas | 20.000 | 303.681 |
+| Features | 14 | 17 |
+| Clientes | 5, por sorteio ou Dirichlet | **48 países reais** |
+| Teto centralizado | 0,9932 | **0,7190** |
+| Heterogeneidade de rótulo | simulada por Dirichlet | **natural: 0,09 a 0,97** |
+| Tamanho dos clientes | partes iguais | **925 a 20.712** |
+
+O teto de 0,9932 no primeiro dataset não é mérito do modelo: o
+`productivity_score` é uma coluna derivada por fórmula de 6 das 14 features, o
+que torna o problema linearmente separável. No PISA o alvo é proficiência em
+matemática aferida por prova, e o teto cai para 0,7190 — um problema de
+dificuldade genuína.
+
+### Pré-processamento do PISA
+
+O PISA passa por um passo obrigatório — `preparar_pisa.py`, executado uma vez —
+que faz três coisas, cada uma por um motivo concreto:
+
+| O que | Por quê |
+|---|---|
+| **Converte os códigos de ausência em nulo** e descarta as linhas incompletas (755.721 → 303.681) | O arquivo de origem foi extraído com `user_missing=True`, que **preserva** os códigos do SPSS em vez de convertê-los. Valores como 97 e 99 constavam como medições e `isna()` reportava zero nulos. Sem isso, a correlação de `ESCS` com desempenho aparece como **−0,150** em vez de **+0,404** — sinal invertido. |
+| **Deriva o alvo e normaliza** (média das dez *plausible values*, binarizada pela mediana global) | Cálculo caro, feito uma vez em vez de 48 vezes por round. |
+| **Grava um Parquet por país** | Na simulação cada cliente é um processo com memória própria. Sem isso, os 48 clientes carregariam os 755 mil registros brutos e repetiriam a limpeza a cada round. A carga cai de ~4 s para **0,31 s**, e 90 MB viram 11 MB. |
+
+A limpeza é por **range válido declarado por variável**, não por lista de
+códigos: em `ST326*` o valor 9 é uma categoria legítima ("mais de 8 horas por
+dia"), e descartá-lo cegamente destruiria dados reais. Detalhes em
+[Sobre o dataset da etapa 4](#sobre-o-dataset-da-etapa-4-pisa-2025).
+
+### O que a heterogeneidade real faz
+
+Comparando o regime heterogêneo contra o controle IID **dentro do PISA**:
+
+| Métrica | IID (controle) | Natural (48 países) | |
+|---|---|---|---|
+| Acurácia | 0,7135–0,7184 | 0,7029–0,7096 | −1 ponto |
+| **Desvio entre clientes** | 0,0132–0,0143 | **0,0564–0,0629** | **4× pior** |
+| **Pior cliente** | 0,6848–0,6927 | **0,5638–0,5847** | **−11 pontos** |
+| Atingiram 99% do teto | **5 de 5** | **0 de 5** | — |
+
+A heterogeneidade natural quase não custa acurácia média, mas **destrói a
+equidade**: o país menos favorecido cai para 0,58 — perto do chute em um problema
+binário — e nenhuma estratégia alcança 99% do teto em 10 rounds.
+
+### Ranking no PISA, partição natural
+
+| # | Acurácia | ROC-AUC | Pior cliente | Desvio entre clientes |
+|---|---|---|---|---|
+| 1 | **FedAvg** 0,7096 | **FedAvg** 0,7830 | FedAvg 0,5847 | FedAvg 0,0564 |
+| 2 | FedTrimmedAvg 0,7068 | FedTrimmedAvg 0,7815 | FedProx 0,5777 | FedProx 0,0589 |
+| 3 | FedProx 0,7063 | FedProx 0,7790 | FedYogi 0,5756 | FedAdam 0,0614 |
+| 4 | FedYogi 0,7042 | FedYogi 0,7769 | FedTrimmedAvg 0,5694 | FedYogi 0,0620 |
+| 5 | FedAdam 0,7029 | FedAdam 0,7751 | FedAdam 0,5638 | FedTrimmedAvg 0,0629 |
+| | *separação clara* | *separação clara* | *faixas se sobrepõem* | *faixas se sobrepõem* |
+
+No dataset de produtividade, sob Dirichlet, o FedProx liderava. No PISA ele cai
+para terceiro, e **o FedAvg — média ponderada pura, sem nenhum mecanismo contra
+heterogeneidade — lidera as quatro métricas**.
+
+### Quais features importam
+
+Peso relativo dos coeficientes padronizados de uma regressão logística:
+
+| Eixo | Produtividade | PISA | |
+|---|---|---|---|
+| Uso digital para lazer | 15,2% | **24,0%** | transferiu |
+| Estresse / ansiedade | 8,6% | 9,8% | transferiu |
+| Distração / foco | **18,5%** | 2,4% | colapsou |
+| Tempo de estudo | **33,6%** | 1,4% | colapsou |
+
+E as dimensões que só o PISA tem somam **62,3% do poder preditivo**: contexto
+socioeconômico (38,4%, com o `ESCS` sozinho em 25%), autocontrole digital
+(19,7%) e ambiente escolar (3,0%).
+
+A feature em segundo lugar é a mais interessante: `ST322Q01JA` — *"desligo as
+notificações do celular durante a aula"*, com 15,9%. Não é **quanto** o aluno usa
+o dispositivo, é se ele consegue **controlar** o uso.
+
+### Resumo
+
+O PISA converteu um benchmark que media eficiência de comunicação em um que mede
+capacidade real de aprendizado sob heterogeneidade. Três descobertas sustentam o
+trabalho. Primeira: a vantagem do FedProx era artefato da partição Dirichlet —
+sob heterogeneidade natural ele perde para o FedAvg, e nenhuma das quatro
+estratégias sofisticadas supera a média ponderada simples. Segunda: a
+heterogeneidade real custa pouca acurácia média, mas quadruplica a desigualdade
+entre instituições e derruba o pior cliente a 0,58, o que expõe equidade — não
+acurácia — como o problema aberto de federated learning aplicado. Terceira: o que
+prediz desempenho é o contexto socioeconômico e a autorregulação digital, não o
+tempo declarado de estudo, cujo peso colapsou de 33,6% para 1,4% ao sair de um
+alvo derivado por fórmula para uma proficiência aferida por prova.
 
 ---
 
@@ -118,8 +214,26 @@ de forma centralizada, com acesso a todos os dados de uma vez.
 
 ```bash
 cd fl_benchmark
-python baseline.py
+python baseline.py --dataset productivity
+python baseline.py --dataset pisa --epochs 30
 ```
+
+O teto é gravado em `results/<dataset>/baseline.json` e serve de referência para
+os alvos de convergência, que são expressos como **fração do teto** e não como
+acurácia absoluta. O motivo: 0,99 é um alvo exigente onde o teto é 0,9932 e
+inalcançável onde o teto é 0,7190.
+
+O PISA exige um passo de preparação antes do primeiro treino, executado uma vez.
+Ele converte os códigos de ausência do SPSS em nulo — sem isso o sinal das
+features inverte — e grava um Parquet por país, para que cada cliente leia apenas
+os seus dados:
+
+```bash
+python preparar_pisa.py
+```
+
+Roda em ~4 s e produz `archive/pisa_preparado/`. Ver
+[Pré-processamento do PISA](#pré-processamento-do-pisa).
 
 ### Uma estratégia por vez
 
@@ -129,6 +243,7 @@ Cada estratégia é executada individualmente, trocando apenas o valor de
 ```bash
 cd fl_benchmark
 
+# --- Dataset de produtividade: 5 clientes ---
 # Partição IID — o cenário de controle
 flwr run . --federation-config num-supernodes=5 --run-config 'strategy="fedavg"        partition="iid"'
 flwr run . --federation-config num-supernodes=5 --run-config 'strategy="fedprox"       partition="iid"'
@@ -142,6 +257,25 @@ flwr run . --federation-config num-supernodes=5 --run-config 'strategy="fedprox"
 flwr run . --federation-config num-supernodes=5 --run-config 'strategy="fedadam"       partition="noniid"'
 flwr run . --federation-config num-supernodes=5 --run-config 'strategy="fedyogi"       partition="noniid"'
 flwr run . --federation-config num-supernodes=5 --run-config 'strategy="fedtrimmedavg" partition="noniid"'
+
+# --- PISA: 48 paises como clientes ---
+# `num-clients` precisa acompanhar `num-supernodes`: o primeiro monta a partição
+# no servidor, o segundo dimensiona a federação. Passar só um faz a partição
+# discordar do número real de clientes, e a execução falha.
+flwr run . --federation-config num-supernodes=48 --run-config 'strategy="fedavg" partition="natural" dataset="pisa" num-clients=48'
+```
+
+Para o lote completo, `run_all.py` cuida desses parâmetros:
+
+```bash
+python run_all.py --dataset pisa --num-clients 48 --partitions natural iid
+```
+
+E `run_noturno.py` executa dentro de um limite de tempo, medindo as primeiras
+execuções para estimar quantas cabem e parando antes de ser interrompido no meio:
+
+```bash
+python run_noturno.py --limite-horas 7 --dataset pisa --num-clients 48
 ```
 
 Cada execução grava dois artefatos em `results/`: um JSON por semente, com a
@@ -272,7 +406,7 @@ métrica válida é o **treino efetivo**.
 
 ---
 
-## Os dois regimes de partição
+## Os três regimes de partição
 
 As instituições simuladas recebem fatias diferentes do conjunto de treino, e a
 forma de fatiar muda completamente a dificuldade do problema federado.
@@ -290,13 +424,31 @@ alguns clientes ficam quase com uma única classe. Com `alpha = 0,3` e cinco
 clientes, a partição efetiva vai de 177 a 6.148 amostras por cliente, e um deles
 recebe apenas uma das duas classes.
 
-É esse segundo regime que separa as estratégias. FedProx, FedAdam e FedYogi
-existem precisamente para lidar com o *client drift* — a divergência entre os
-modelos locais quando as distribuições diferem — e não têm vantagem alguma a
-demonstrar num cenário homogêneo.
+**`natural`** — a partição é **lida dos dados**, não construída. Cada valor
+distinto de uma coluna do dataset define um cliente; no PISA é o país (`CNT`),
+e são 48. A heterogeneidade resultante não é parametrizada por `alpha`: ela
+simplesmente é o que os dados trazem. A fração de alunos acima da mediana
+mundial vai de 0,09 na República Dominicana a 0,97 em QCI
+(Pequim-Xangai-Jiangsu-Zhejiang), e o tamanho dos clientes de 925 a 20.712
+alunos — *label skew* e *quantity skew* severos, sem precisar fabricar nenhum
+dos dois.
 
-A semente é fixa nos dois regimes, de modo que todas as estratégias são
-avaliadas exatamente sobre a mesma divisão de dados.
+É o regime mais fiel ao caso de uso, porque a impossibilidade de centralizar
+microdados educacionais nacionais é justamente o que justifica a federação.
+
+Os regimes heterogêneos são os que separam as estratégias. FedProx, FedAdam e
+FedYogi existem precisamente para lidar com o *client drift* — a divergência
+entre os modelos locais quando as distribuições diferem — e não têm vantagem
+alguma a demonstrar num cenário homogêneo.
+
+A diferença entre `noniid` e `natural` acabou sendo o achado central do projeto:
+o FedProx lidera sob Dirichlet e perde para o FedAvg sob heterogeneidade real.
+Partição simulada e partição real não são intercambiáveis.
+
+A semente é fixa em todos os regimes, de modo que todas as estratégias são
+avaliadas exatamente sobre a mesma divisão de dados. No regime `natural` a
+semente não afeta a partição — ela vem dos dados — apenas a ordem dos batches e
+a divisão interna de validação de cada cliente.
 
 ---
 
@@ -307,10 +459,11 @@ avaliadas exatamente sobre a mesma divisão de dados.
 pela mediana — o que dá classes exatamente equilibradas, 10.000 para cada lado,
 sem escolher um limiar arbitrário.
 
-Uma característica do dataset precisa ser registrada para que os resultados não
-sejam mal interpretados: **`productivity_score` é uma função linear exata de 6
-das 14 features utilizadas**. Uma regressão linear sobre o conjunto atinge
-R² = 1,0000, com os seguintes coeficientes padronizados:
+Uma característica precisa ser registrada para que os resultados não sejam mal
+interpretados. As features são observações de estudantes, mas o alvo não é uma
+medição: **`productivity_score` é uma coluna derivada por fórmula a partir de 6
+das 14 features**. Uma regressão linear sobre o conjunto atinge R² = 1,0000, com
+os seguintes coeficientes padronizados:
 
 ```
 study_hours_per_day  +11,84    focus_score            +6,55
@@ -318,12 +471,13 @@ sleep_hours           +5,49    phone_usage_hours      -5,35
 stress_level          -3,09    attendance_percentage  +2,82
 ```
 
-As outras 8 features têm coeficiente exatamente zero — são ruído. Foram mantidas
-de propósito, porque aprender a ignorá-las faz parte do que o benchmark mede.
+As outras 8 features não entram na fórmula do alvo e têm coeficiente exatamente
+zero no modelo. Foram mantidas de propósito, porque aprender a ignorá-las faz
+parte do que o benchmark mede.
 
 A consequência prática é que o problema é linearmente separável e qualquer
-modelo razoável passa de 98% de acurácia. **A acurácia alta é propriedade do
-dataset, não mérito do modelo nem da estratégia federada.** É por isso que o
+modelo razoável passa de 98% de acurácia. **A acurácia alta é propriedade de como
+o alvo foi construído, não mérito do modelo nem da estratégia federada.** É por isso que o
 benchmark reporta rounds até a convergência e equidade entre clientes: num
 problema em que todas as estratégias saturam, são essas as métricas que ainda
 distinguem uma da outra.
@@ -335,8 +489,55 @@ que o benchmark responde neste dataset não é *qual estratégia aprende melhor*
 mas *qual distribui o aprendizado de forma mais equilibrada entre as
 instituições e com menos rounds de comunicação*.
 
-Quando o dataset da instituição for liberado, essa limitação provavelmente
-desaparece, e as métricas de acurácia voltam a discriminar por si mesmas.
+Essa limitação foi superada na etapa 4: o PISA 2025 tem alvo aferido por prova,
+e as métricas de acurácia voltam a discriminar por si mesmas.
+
+## Sobre o dataset da etapa 4 — PISA 2025
+
+`archive/pisa_preparado/` é produzido por `fl_benchmark/preparar_pisa.py` a
+partir dos microdados do estudante do PISA 2025: 755.721 alunos e 90 países na
+origem, 303.681 alunos e 48 países após a limpeza. O alvo é a nota de matemática
+acima da mediana global.
+
+O script roda **uma vez** e materializa um arquivo Parquet por país. Isso não é
+conveniência: na simulação cada cliente é um processo próprio com memória
+própria, e sem a preparação os 48 clientes carregariam os 755 mil registros
+brutos e repetiriam toda a limpeza a cada round. Com a preparação, a carga cai de
+~4 s para 0,31 s e o conjunto ocupa 11 MB em vez de 90 MB. O layout também
+espelha a realidade do federated learning: cada instituição possui um arquivo com
+os seus dados e apenas os seus.
+
+Três tratamentos acontecem ali, e o primeiro é indispensável.
+
+**Os códigos de ausência do SPSS não vinham convertidos.** O arquivo de origem
+foi extraído com `pyreadstat.read_sav(..., user_missing=True)`, parâmetro que
+**preserva** os códigos em vez de convertê-los em nulo. Valores como `97` (não
+aplicável) e `99` (sem resposta) estavam gravados como se fossem medições, e
+`isna()` reportava zero nulos — falso. O efeito é grave e silencioso:
+
+| Variável | Sem limpeza | Com limpeza |
+|---|---|---|
+| `ESCS` (nível socioeconômico) | **−0,150** | **+0,404** |
+| `HOMEPOS` (bens no domicílio) | −0,079 | +0,348 |
+| `ICTRES` (recursos digitais) | +0,177 | +0,302 |
+
+Os sinais invertidos contradizem a literatura do PISA. A causa é o volume: o
+`ICTRES` tinha 275.099 registros (36%) com valor 97. A limpeza é feita por
+**range válido declarado por variável**, não por lista de códigos — a distinção
+importa, porque em `ST326*` o valor 9 é uma categoria legítima ("mais de 8 horas
+por dia"), e descartá-lo cegamente destruiria dados reais.
+
+**Dois questionários são opcionais.** As colunas `Option_ICTQ` e `Option_PQ`
+indicam se o país os aplicou: o de ICT alcançou 48% dos alunos e o de pais 23%.
+Exigir as features do bloco de ICT custaria 26% da amostra, e por isso ele ficou
+fora do núcleo de 17 features — junto com as perguntas sobre videogames e redes
+sociais, que eram as mais comparáveis com o dataset da etapa 3.
+
+**As dez colunas `PV*MATH` não são dez notas**, mas dez imputações da mesma
+proficiência latente. O alvo usa a média, o que subestima o erro de medida; o
+procedimento da OCDE prescreve análise múltipla pela regra de Rubin. O peso
+amostral `W_FSTUWT` não é utilizado, porque o objetivo é comparar estratégias de
+agregação e não produzir estimativas populacionais nacionais.
 
 ### Adicionar um novo dataset
 

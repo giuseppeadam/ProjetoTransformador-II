@@ -1,0 +1,113 @@
+plano: 30 execucoes, limite de 7.0h
+  1. fedavg / natural / seed 42
+  2. fedprox / natural / seed 42
+  3. fedadam / natural / seed 42
+  4. fedyogi / natural / seed 42
+  5. fedtrimmedavg / natural / seed 42
+  6. fedavg / iid / seed 42
+  ... e 24 outras
+[fedavg / natural / seed 42] iniciando
+[fedavg / natural / seed 42] concluido em 485.8s -> fedavg_natural_seed42.log
+    media 8.1 min/execucao | restam 6.9h | cabem ~37
+[fedprox / natural / seed 42] iniciando
+[fedprox / natural / seed 42] concluido em 402.9s -> fedprox_natural_seed42.log
+    media 7.4 min/execucao | restam 6.8h | cabem ~38
+[fedadam / natural / seed 42] iniciando
+[fedadam / natural / seed 42] concluido em 350.5s -> fedadam_natural_seed42.log
+    media 6.9 min/execucao | restam 6.7h | cabem ~40
+[fedyogi / natural / seed 42] iniciando
+[fedyogi / natural / seed 42] concluido em 336.1s -> fedyogi_natural_seed42.log
+    media 6.6 min/execucao | restam 6.6h | cabem ~41
+[fedtrimmedavg / natural / seed 42] iniciando
+[fedtrimmedavg / natural / seed 42] concluido em 340.3s -> fedtrimmedavg_natural_seed42.log
+    media 6.4 min/execucao | restam 6.5h | cabem ~41
+[fedavg / iid / seed 42] iniciando
+[fedavg / iid / seed 42] concluido em 272.3s -> fedavg_iid_seed42.log
+    media 6.1 min/execucao | restam 6.4h | cabem ~42
+[fedprox / iid / seed 42] iniciando
+[fedprox / iid / seed 42] concluido em 298.2s -> fedprox_iid_seed42.log
+    media 5.9 min/execucao | restam 6.3h | cabem ~42
+[fedadam / iid / seed 42] iniciando
+[fedadam / iid / seed 42] concluido em 284.3s -> fedadam_iid_seed42.log
+    media 5.8 min/execucao | restam 6.2h | cabem ~42
+[fedyogi / iid / seed 42] iniciando
+[fedyogi / iid / seed 42] concluido em 277.3s -> fedyogi_iid_seed42.log
+    media 5.6 min/execucao | restam 6.2h | cabem ~42
+[fedtrimmedavg / iid / seed 42] iniciando
+[fedtrimmedavg / iid / seed 42] concluido em 268.0s -> fedtrimmedavg_iid_seed42.log
+    media 5.5 min/execucao | restam 6.1h | cabem ~42
+[fedavg / natural / seed 43] iniciando
+[fedavg / natural / seed 43] concluido em 341.7s -> fedavg_natural_seed43.log
+    media 5.5 min/execucao | restam 6.0h | cabem ~42
+[fedprox / natural / seed 43] iniciando
+[fedprox / natural / seed 43] concluido em 378.1s -> fedprox_natural_seed43.log
+    media 5.6 min/execucao | restam 5.9h | cabem ~40
+[fedadam / natural / seed 43] iniciando
+[fedadam / natural / seed 43] concluido em 338.4s -> fedadam_natural_seed43.log
+    media 5.6 min/execucao | restam 5.8h | cabem ~40
+[fedyogi / natural / seed 43] iniciando
+[fedyogi / natural / seed 43] concluido em 350.6s -> fedyogi_natural_seed43.log
+    media 5.6 min/execucao | restam 5.7h | cabem ~39
+[fedtrimmedavg / natural / seed 43] iniciando
+[fedtrimmedavg / natural / seed 43] concluido em 367.6s -> fedtrimmedavg_natural_seed43.log
+    media 5.7 min/execucao | restam 5.6h | cabem ~38
+[fedavg / iid / seed 43] iniciando
+[fedavg / iid / seed 43] concluido em 264.8s -> fedavg_iid_seed43.log
+    media 5.6 min/execucao | restam 5.5h | cabem ~38
+[fedprox / iid / seed 43] iniciando
+[fedprox / iid / seed 43] concluido em 313.3s -> fedprox_iid_seed43.log
+    media 5.6 min/execucao | restam 5.4h | cabem ~38
+[fedadam / iid / seed 43] iniciando
+[fedadam / iid / seed 43] concluido em 303.0s -> fedadam_iid_seed43.log
+    media 5.5 min/execucao | restam 5.3h | cabem ~37
+[fedyogi / iid / seed 43] iniciando
+[fedyogi / iid / seed 43] concluido em 297.6s -> fedyogi_iid_seed43.log
+    media 5.5 min/execucao | restam 5.3h | cabem ~37
+[fedtrimmedavg / iid / seed 43] iniciando
+[fedtrimmedavg / iid / seed 43] concluido em 286.2s -> fedtrimmedavg_iid_seed43.log
+    media 5.5 min/execucao | restam 5.2h | cabem ~36
+[fedavg / natural / seed 44] iniciando
+[fedavg / natural / seed 44] concluido em 352.2s -> fedavg_natural_seed44.log
+    media 5.5 min/execucao | restam 5.1h | cabem ~35
+[fedprox / natural / seed 44] iniciando
+[fedprox / natural / seed 44] concluido em 379.8s -> fedprox_natural_seed44.log
+    media 5.5 min/execucao | restam 5.0h | cabem ~35
+[fedadam / natural / seed 44] iniciando
+[fedadam / natural / seed 44] concluido em 371.9s -> fedadam_natural_seed44.log
+    media 5.6 min/execucao | restam 4.9h | cabem ~34
+[fedyogi / natural / seed 44] iniciando
+[fedyogi / natural / seed 44] concluido em 342.0s -> fedyogi_natural_seed44.log
+    media 5.6 min/execucao | restam 4.8h | cabem ~33
+[fedtrimmedavg / natural / seed 44] iniciando
+[fedtrimmedavg / natural / seed 44] concluido em 346.1s -> fedtrimmedavg_natural_seed44.log
+    media 5.6 min/execucao | restam 4.7h | cabem ~32
+[fedavg / iid / seed 44] iniciando
+[fedavg / iid / seed 44] concluido em 278.7s -> fedavg_iid_seed44.log
+    media 5.5 min/execucao | restam 4.6h | cabem ~32
+[fedprox / iid / seed 44] iniciando
+[fedprox / iid / seed 44] concluido em 330.6s -> fedprox_iid_seed44.log
+    media 5.5 min/execucao | restam 4.5h | cabem ~31
+[fedadam / iid / seed 44] iniciando
+[fedadam / iid / seed 44] concluido em 277.3s -> fedadam_iid_seed44.log
+    media 5.5 min/execucao | restam 4.4h | cabem ~31
+[fedyogi / iid / seed 44] iniciando
+[fedyogi / iid / seed 44] concluido em 274.2s -> fedyogi_iid_seed44.log
+    media 5.5 min/execucao | restam 4.4h | cabem ~30
+[fedtrimmedavg / iid / seed 44] iniciando
+[fedtrimmedavg / iid / seed 44] concluido em 280.2s -> fedtrimmedavg_iid_seed44.log
+    media 5.4 min/execucao | restam 4.3h | cabem ~30
+
+=== encerrado em 2.72h de 7.0h ===
+  concluidas:    30
+  falharam:      0
+  nao iniciadas: 0 (tempo insuficiente)
+
+consolidando...
+Relatorio atualizado: FEDAVG.md
+Relatorio atualizado: FEDPROX.md
+Relatorio atualizado: FEDADAM.md
+Relatorio atualizado: FEDYOGI.md
+Relatorio atualizado: FEDTRIMMEDAVG.md
+Comparativo gravado em C:\Users\Giuseppe\estudo\proj-transf\ProjetoTransformador-II\fl_benchmark\results\README.md
+
+resumo da noite em C:\Users\Giuseppe\estudo\proj-transf\ProjetoTransformador-II\fl_benchmark\results\logs\resumo_noturno.json
