@@ -36,6 +36,8 @@ strategy = "fedavg"
 partition = "iid"
 # dataset: productivity (14 features, 20k linhas, 5 clientes sorteados)
 #        | pisa (17 features, 304k linhas, 48 paises como clientes reais)
+#        | social_media (25 features, 369 respondentes apos deduplicacao;
+#          iid/noniid com 5 clientes, natural com 3 = faixas etarias)
 # O PISA exige `python preparar_pisa.py` uma vez antes do primeiro treino, e
 # num-clients = 48 junto de --federation-config num-supernodes=48.
 dataset = "productivity"

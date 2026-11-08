@@ -9,6 +9,7 @@ quatro etapas que compartilham o mesmo problema e mudam a forma de resolvê-lo.
 | 2 — Federated Learning | Primeira implementação federada com Flower, uma estratégia selecionável por configuração | `fl_addiction/` |
 | 3 — Benchmark de estratégias | Cinco estratégias federadas comparadas em dois regimes de partição, com métricas e relatórios por estratégia | `fl_benchmark/` |
 | 4 — Heterogeneidade real | O mesmo benchmark sobre o PISA 2025: 303.681 alunos e **48 países como clientes reais**, em vez de partições sorteadas | `fl_benchmark/` |
+| 5 — Questionário de redes sociais | O mesmo benchmark sobre um questionário de impacto das redes sociais nos estudos: **369 respondentes**, alvo não derivado das features | `fl_benchmark/` |
 
 Os comparativos ficam em [`fl_benchmark/results/`](fl_benchmark/results/), um por
 dataset, cada um com o relatório detalhado das cinco estratégias ao lado.
@@ -17,19 +18,19 @@ dataset, cada um com o relatório detalhado das cinco estratégias ao lado.
 
 ## Overview dos resultados
 
-Sessenta execuções: cinco estratégias × dois regimes de partição × três sementes,
-em dois datasets.
+Noventa execuções: cinco estratégias × dois regimes de partição × três sementes,
+em três datasets.
 
-### Os dois datasets
+### Os três datasets
 
-| | Produtividade (etapa 3) | PISA 2025 (etapa 4) |
-|---|---|---|
-| Linhas | 20.000 | 303.681 |
-| Features | 14 | 17 |
-| Clientes | 5, por sorteio ou Dirichlet | **48 países reais** |
-| Teto centralizado | 0,9932 | **0,7190** |
-| Heterogeneidade de rótulo | simulada por Dirichlet | **natural: 0,09 a 0,97** |
-| Tamanho dos clientes | partes iguais | **925 a 20.712** |
+| | Produtividade (etapa 3) | PISA 2025 (etapa 4) | Redes sociais (etapa 5) |
+|---|---|---|---|
+| Linhas | 20.000 | 303.681 | 369 (de 1.501) |
+| Features | 14 | 17 | 25 |
+| Clientes | 5, por sorteio ou Dirichlet | **48 países reais** | 5, por sorteio ou Dirichlet |
+| Teto centralizado | 0,9932 | **0,7190** | 0,8649 |
+| Heterogeneidade de rótulo | simulada por Dirichlet | **natural: 0,09 a 0,97** | simulada por Dirichlet |
+| Tamanho dos clientes | partes iguais | **925 a 20.712** | ~59 (IID) / 41 a 90 (non-IID) |
 
 O teto de 0,9932 no primeiro dataset não é mérito do modelo: o
 `productivity_score` é uma coluna derivada por fórmula de 6 das 14 features, o
@@ -102,6 +103,24 @@ A feature em segundo lugar é a mais interessante: `ST322Q01JA` — *"desligo as
 notificações do celular durante a aula"*, com 15,9%. Não é **quanto** o aluno usa
 o dispositivo, é se ele consegue **controlar** o uso.
 
+### Redes sociais: um dataset pequeno
+
+| Estratégia | Acurácia IID | Acurácia non-IID | Pior cliente non-IID |
+|---|---|---|---|
+| FedAvg | 0,8559 | 0,8198 | 0,5646 |
+| FedProx | 0,8423 | **0,8288** | **0,6217** |
+| FedAdam | 0,7297 | 0,7703 | 0,5884 |
+| FedYogi | 0,7252 | 0,6937 | 0,2794 |
+| FedTrimmedAvg | **0,8649** | 0,8198 | 0,5698 |
+
+FedAvg, FedProx e FedTrimmedAvg chegam perto do teto no IID e perdem de 1 a 5
+pontos sob Dirichlet, com faixas que se sobrepõem. **FedAdam e FedYogi ficam
+cerca de 13 pontos abaixo já no controle IID**: o `eta = 0,3` foi calibrado no dataset de
+produtividade e não transfere — ver [Calibração do eta](#calibração-do-eta).
+
+O teste central tem 74 amostras, então cada acerto vale 1,35 ponto. Diferenças
+dessa ordem entre estratégias não são conclusivas.
+
 ### Resumo
 
 O PISA converteu um benchmark que media eficiência de comunicação em um que mede
@@ -141,7 +160,8 @@ alvo derivado por fórmula para uma proficiência aferida por prova.
 ```
 ProjetoTransformador-II/
 ├── archive/
-│   └── student_productivity_distraction_dataset_20000.csv   dataset da etapa 3
+│   ├── student_productivity_distraction_dataset_20000.csv   dataset da etapa 3
+│   └── Social_Media_Impact_OnStudents_numeric.csv           dataset da etapa 5
 ├── dataset_novo_indice.csv - ....csv                        dataset das etapas 1 e 2
 ├── fl_addiction/                                            etapa 2
 └── fl_benchmark/                                            etapa 3
@@ -207,6 +227,21 @@ set PYTHONUTF8=1
 set PYTHONIOENCODING=utf-8
 ```
 
+O backend de simulação depende do `ray`, que não instala no Python 3.13 do
+Windows. Use um ambiente com Python 3.12:
+
+```bash
+py -3.12 -m venv .venv312
+.venv312\Scripts\python -m pip install "flwr[simulation]" torch pandas scikit-learn pyarrow
+```
+
+O ambiente pode ficar dentro de `fl_benchmark/`: o `.gitignore` da pasta impede
+que o Flower o empacote junto com a aplicação. Se um `flwr run` anterior foi
+feito com outro Python, encerre os processos `flower-superlink` e
+`flower-superexec` que ficaram em segundo plano — senão a simulação continua
+usando o interpretador antigo. Nas versões recentes do Flower a federação local
+se chama `local`, e o `run_all.py` recebe `--federation local`.
+
 ### Teto de referência
 
 Antes de comparar estratégias, vale estabelecer o teto: o mesmo modelo treinado
@@ -216,6 +251,7 @@ de forma centralizada, com acesso a todos os dados de uma vez.
 cd fl_benchmark
 python baseline.py --dataset productivity
 python baseline.py --dataset pisa --epochs 30
+python baseline.py --dataset social_media --epochs 30
 ```
 
 O teto é gravado em `results/<dataset>/baseline.json` e serve de referência para
@@ -269,6 +305,7 @@ Para o lote completo, `run_all.py` cuida desses parâmetros:
 
 ```bash
 python run_all.py --dataset pisa --num-clients 48 --partitions natural iid
+python run_all.py --dataset social_media --partitions iid noniid
 ```
 
 E `run_noturno.py` executa dentro de um limite de tempo, medindo as primeiras
@@ -321,7 +358,12 @@ python run_all.py --rounds 20
 O sucesso de cada execução é julgado pelo artefato gravado, não pelo código de
 saída do processo: o `flwr run` pode encerrar com código 0 mesmo quando o backend
 de simulação falha na inicialização, e confiar no código de saída faria uma
-execução perdida ser contada como concluída.
+execução perdida ser contada como concluída. O artefato é procurado em
+`results/<dataset>/`, onde o servidor grava.
+
+Os logs vão para `results/logs/<estrategia>_<particao>_seed<N>.log`, sem o nome
+do dataset. Rodar um dataset novo sobrescreve os logs do anterior; os do
+`social_media` foram movidos para `results/logs/social_media/`.
 
 ### Consolidar o comparativo
 
@@ -394,6 +436,15 @@ derivar uma semente de `(semente, cliente, round)` — o número do round vem
 injetado pela estratégia em cada mensagem de treino — e passá-la a um
 `torch.Generator` explícito. Isso reduziu a dispersão da acurácia de ±0,003 para
 ±0,0001.
+
+Uma terceira, também corrigida, na partição non-IID. Quando o sorteio de
+Dirichlet deixa um cliente com menos de 40 amostras, ele é refeito — e a nova
+tentativa usava `seed + tentativa`. Sementes vizinhas colidiam: a 42 na
+tentativa 1 usava o mesmo gerador que a 43 na tentativa 0. **No dataset de
+produtividade, as sementes 42 e 43 do non-IID compartilham a mesma partição**; no
+de redes sociais, que exige dezenas de tentativas, as três coincidiam. A
+correção usa `default_rng([seed, tentativa])` a partir da segunda tentativa,
+preservando as partições que já saíam na primeira.
 
 ### Treino efetivo e wall-clock
 
@@ -539,6 +590,42 @@ procedimento da OCDE prescreve análise múltipla pela regra de Rubin. O peso
 amostral `W_FSTUWT` não é utilizado, porque o objetivo é comparar estratégias de
 agregação e não produzir estimativas populacionais nacionais.
 
+## Sobre o dataset da etapa 5 — redes sociais
+
+`archive/Social_Media_Impact_OnStudents_numeric.csv` é um questionário sobre o
+uso de redes sociais durante os estudos, já codificado em números: escalas
+Likert como ordinais e gênero e plataforma em one-hot. A limpeza é feita na
+carga, pela função `preprocess` declarada no registro:
+
+| O que | Por quê |
+|---|---|
+| **Remove 1.130 linhas duplicadas** (1.501 → 369) | São cópias exatas de outras respostas. Sem isso, a mesma resposta cai no treino e no teste, e a acurácia passa a medir memorização. |
+| **Remove 9 linhas inválidas** | Em 6 delas o campo `UsageLimitation` traz o texto da própria pergunta ("Q15. How often…"); nas outras 3 está vazio. O valor numérico ali era imputado. |
+
+O dataset não tem uma coluna de vício. O alvo é `ProductivityImpact ≥ 2` — o
+estudante declara que as redes sociais prejudicam sua produtividade de forma
+moderada ou significativa —, o que dá 60% de positivos. O limiar é explícito
+(`positive_threshold`), e não pela mediana, porque numa escala de quatro níveis
+o corte "acima da mediana" deixaria 27% de positivos.
+
+`AcademicImpact` e `ProductivityWithoutSM` ficaram fora das 25 features: são
+autoavaliações de consequência, da mesma natureza do alvo, e funcionariam como
+vazamento parcial da resposta. Diferente do dataset de produtividade, **o alvo
+não é derivado das features** — uma regressão linear sobre as 25 explica
+R² = 0,54.
+
+A base é pequena: com 5 clientes, cada um treina com cerca de 47 amostras e
+valida com 12. Mais rounds não ajudam — com 30 ou 50 o non-IID tende a piorar
+por overfitting —, e por isso o protocolo de 10 rounds foi mantido.
+
+O registro declara `AgeGroup` como `group_column`, o que habilita o regime
+`natural` com as três faixas etárias como clientes (50, 174 e 71 amostras). Ele
+ainda não foi executado:
+
+```bash
+python run_all.py --dataset social_media --partitions natural --num-clients 3
+```
+
 ### Adicionar um novo dataset
 
 O registro em `fl_benchmark/fl_benchmark/datasets.py` existe para isso. Coloque
@@ -558,6 +645,11 @@ DATASETS = {PRODUCTIVITY.name: PRODUCTIVITY, NOVO.name: NOVO}
 
 Depois, execute com `--run-config 'dataset="nome-curto"'`. Nenhum código de
 estratégia, partição, treino ou métrica precisa mudar.
+
+Três campos opcionais cobrem os casos menos simples: `preprocess`, uma função
+de limpeza aplicada ao DataFrame antes do split; `positive_threshold`, um corte
+explícito para alvos ordinais; e `group_column`, para o regime `natural`. A
+entrada `SOCIAL_MEDIA` usa os três.
 
 Se os dados estiverem fora do repositório, aponte a variável de ambiente
 `FL_BENCHMARK_DATA_DIR` para a pasta que os contém.
@@ -643,6 +735,11 @@ Resultado para o FedAdam, acurácia final na partição IID:
 Com `eta = 1,0` o treinamento divergiu, colapsando para 50% nos últimos rounds.
 O valor escolhido, 0,3, é o padrão no `pyproject.toml`; as varreduras completas
 estão em `results/calibration_eta_*.json` e reproduzidas no comparativo.
+
+A calibração vale para o dataset em que foi feita. No de redes sociais, com o
+mesmo `eta = 0,3`, FedAdam e FedYogi terminam o controle IID em 0,73 contra
+0,86 das demais — sinal de que o passo do servidor precisa ser recalibrado ali
+antes de qualquer conclusão sobre as adaptativas.
 
 Vale notar o que o valor original revela: `eta = 0,01` deixa o passo do servidor
 dez vezes menor que o default da implementação de referência, e o FedAdam

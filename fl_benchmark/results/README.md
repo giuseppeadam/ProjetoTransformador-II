@@ -6,3 +6,4 @@ Um comparativo por dataset. Os números de datasets diferentes **não são compa
 |---|---|---|
 | `pisa` | 30 | [pisa/README.md](pisa/README.md) |
 | `productivity` | 30 | [productivity/README.md](productivity/README.md) |
+| `social_media` | 30 | [social_media/README.md](social_media/README.md) |

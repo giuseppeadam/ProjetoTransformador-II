@@ -48,7 +48,12 @@ def _dirichlet(y: np.ndarray, num_partitions: int, alpha: float, seed: int) -> l
     classes = np.unique(y)
 
     for tentativa in range(MAX_TENTATIVAS):
-        rng = np.random.default_rng(seed + tentativa)
+        # `seed + tentativa` faria sementes vizinhas colidirem: a 42 na
+        # tentativa 1 usaria o mesmo gerador que a 43 na tentativa 0, e as
+        # repetições do benchmark sairiam com partições idênticas. A primeira
+        # tentativa mantém `default_rng(seed)`, então partições que já saíam na
+        # tentativa 0 não mudam.
+        rng = np.random.default_rng(seed if tentativa == 0 else [seed, tentativa])
         por_cliente: list[list[np.ndarray]] = [[] for _ in range(num_partitions)]
 
         for classe in classes:

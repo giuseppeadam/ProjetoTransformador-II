@@ -1,0 +1,24 @@
+{
+  "kind": "centralized_baseline",
+  "dataset": "social_media",
+  "device": "cpu",
+  "config": {
+    "epochs": 30,
+    "batch-size": 32,
+    "learning-rate": 0.01,
+    "seed": 42
+  },
+  "train_samples": 295,
+  "test_samples": 74,
+  "final": {
+    "accuracy": 0.8648648648648649,
+    "f1": 0.8809523809523809,
+    "auc": 0.9111111111111112,
+    "loss": 0.8309421539306641,
+    "train_loss": 0.15978267589739215
+  },
+  "timing": {
+    "train_effective_s": 0.4863340000156313,
+    "wall_clock_s": 5.6864529000013135
+  }
+}
