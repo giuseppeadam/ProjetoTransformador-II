@@ -1,0 +1,366 @@
+Flower App configuration warnings in 'C:\Users\nalva\Desktop\ProjetoTransformador-II-main\fl_benchmark\pyproject.toml':
+- Recommended property "license" missing in [project]
+Using SuperLink: local (127.0.0.1:39091)
+Successfully started run 13676661591441627548
+[92mINFO [0m:      Starting logstream for run_id `13676661591441627548`
+[92mINFO [0m:      Starting Flower Simulation
+[93mWARNING [0m:   Since flwr 1.32, default simulated SuperNodes changed from 10 to 2.
+[92mINFO [0m:      Federation `@none/default` (5 simulated SuperNodes)
+[92mINFO [0m:      To change federation size, use the following command:
+[92mINFO [0m:      	flwr federation simulation-config @none/default <superlink> --num-supernodes <N>
+[32m[1mSuccessfully installed fl-benchmark to C:\Users\nalva\.flwr\apps\pepe.fl-benchmark.1.0.0.49b7d375.[0m
+[93mWARNING [0m:   Skipping `flwr` dependency from app requirements to avoid replacing the running Flower installation.
+[92mINFO [0m:      Created env for run in: C:\Users\nalva\.flwr\runtime-envs\13676661591441627548
+[92mINFO [0m:      Installing application dependencies...
+[92mINFO [0m:      uv sync took 27.7 seconds.
+[92mINFO [0m:      Installed: [alembic==1.20.1, annotated-doc==0.0.5, annotated-types==0.8.0, anyio==4.16.0, attrs==26.1.0, certifi==2026.10.23, cffi==2.1.1, charset-normalizer==3.5.2, click==8.5.1, cloudpickle==3.1.2, colorama==0.4.6, cryptography==50.0.2, fastapi==0.138.2, filelock==4.2.9, fsspec==2026.9.0, greenlet==3.5.6, grpcio==1.85.1, h11==0.16.0, httpcore==1.0.9, httptools==0.9.0, httpx==0.28.1, idna==3.20, iterators==0.0.2, jinja2==3.1.6, joblib==1.6.0, jsonschema-specifications==2025.9.1, jsonschema==4.26.0, mako==1.4.3, markdown-it-py==4.2.0, markupsafe==3.0.4, mdurl==0.1.2, mpmath==1.3.0, msgpack==1.2.4, narwhals==2.28.0, networkx==3.7, numpy==2.5.4, packaging==25.0, pandas==3.1.1, pathspec==1.1.1, prompt-toolkit==3.0.53, protobuf==6.33.6, pycparser==3.12, pycryptodome==3.24.1, pydantic-core==2.50.4, pydantic==2.14.3, pygments==2.21.0, python-dateutil==4.0.0, python-dotenv==1.2.4, pyyaml==6.0.3, ray==2.55.1, referencing==0.37.0, requests==2.34.2, rich==14.3.4, rpds-py==2026.9.1, scikit-learn==1.9.1, scipy==1.18.1, setuptools==84.2.1, shellingham==1.5.4, sqlalchemy==2.1.8, starlette==1.3.1, sympy==1.14.0, threadpoolctl==3.8.0, tomli-w==1.2.0, tomli==2.5.0, torch==2.15.0, typer==0.20.1, typing-extensions==4.16.0, typing-inspection==0.4.5, tzdata==2026.6, urllib3==2.8.0, uv==0.13.7, uvicorn==0.49.0, watchfiles==1.3.0, wcwidth==0.9.4, websockets==17.4]
+[92mINFO [0m:      App dependencies installed successfully via uv sync.
+
+>>> estrategia: FedAdam | particao: iid | device: cpu
+
+[92mINFO [0m:      Starting FedAdam strategy:
+[92mINFO [0m:      	├── Number of rounds: 10
+[92mINFO [0m:      	├── ArrayRecord (0.01 MB)
+[92mINFO [0m:      	├── ConfigRecord (train): {'lr': 0.01}
+[92mINFO [0m:      	├── ConfigRecord (evaluate): (empty!)
+[92mINFO [0m:      	├──> FedOpt settings:
+[92mINFO [0m:      	│	├── eta (0.3) | eta_l (0.1)
+[92mINFO [0m:      	│	├── beta_1 (0.9) | beta_2 (0.99)
+[92mINFO [0m:      	│	└── tau (1e-09)
+[92mINFO [0m:      	├──> Sampling:
+[92mINFO [0m:      	│	├──Fraction: train (1.00) | evaluate ( 1.00)
+[92mINFO [0m:      	│	├──Minimum nodes: train (5) | evaluate (5)
+[92mINFO [0m:      	│	└──Minimum available nodes: 5
+[92mINFO [0m:      	└──> Keys in records:
+[92mINFO [0m:      		├── Weighted by: 'num-examples'
+[92mINFO [0m:      		├── ArrayRecord key: 'arrays'
+[92mINFO [0m:      		└── ConfigRecord key: 'config'
+[92mINFO [0m:      
+[92mINFO [0m:      Initial global evaluation results: {'accuracy': 0.6081081081081081, 'f1': 0.7563025210084033, 'auc': 0.50727969348659, 'loss': 0.6753984399743982}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 1/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py:2051: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+[33m(raylet)[0m Stack (most recent call first):
+[33m(raylet)[0m Windows fatal exception: Windows fatal exception: access violation
+[33m(raylet)[0m 
+[33m(raylet)[0m   File "C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py", line 628 in job_logging_config
+[33m(raylet)[0m   File "C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py", line 2801 in disconnect
+[33m(raylet)[0m   File "C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py", line 2132 in shutdown
+[33m(raylet)[0m   File "C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py", line 1143 in access violation  File Windows fatal exception: Windows fatal exception: access violation
+[33m(raylet)[0m 
+[33m(raylet)[0m 
+[33m(raylet)[0m 
+[33m(raylet)[0m access violation
+[33m(raylet)[0m 
+[33m(raylet)[0m "wrapper
+[33m(raylet)[0m   File "Stack (most recent call first):
+[33m(raylet)[0m C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\client_mode_hook.py"C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.pyStack (most recent call first):
+[33m(raylet)[0m   File "C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py", line 628 in job_logging_config, line   File 
+[33m(raylet)[0m   File ""  File "C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py", line 2801 in disconnectC:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py", line 2132 in shutdown
+[33m(raylet)[0m   File 
+[33m(raylet)[0m   File ""C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py", line 1143 in wrapper
+[33m(raylet)[0m C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py", line 2132 in shutdown
+[33m(raylet)[0m ", line 107 in wrapper
+[33m(raylet)[0m Windows fatal exception: 628Stack (most recent call first):
+[33m(raylet)[0m , line 2801 in disconnect
+[33m(raylet)[0m 
+[33m(raylet)[0m  in job_logging_config
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'local_samples': 235.0, 'train_loss': 0.6067083070675532, 'train_time_max_s': 0.07538430002750829, 'train_time_s': 0.24309260008158162, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.7333333333333333, 'auc': 0.8555357142857143, 'eval_time_s': 0.006782500015106052, 'f1': 0.7781091457562046, 'loss': 1.5621538400650024, 'accuracy_std': 0.11055415967851333, 'accuracy_min': 0.5833333333333334, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.7567567567567568, 'f1': 0.7692307692307693, 'auc': 0.850191570881226, 'loss': 1.8019984477275126}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 2/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'local_samples': 235.0, 'train_loss': 0.7859788784446815, 'train_time_max_s': 0.012791299959644675, 'train_time_s': 0.05933949985774234, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.25, 'auc': 0.21, 'eval_time_s': 0.00367719994392246, 'f1': 0.28093240093240096, 'loss': 8.372663879394532, 'accuracy_std': 0.13944333775567927, 'accuracy_min': 0.0, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.2702702702702703, 'f1': 0.41304347826086957, 'auc': 0.12873563218390804, 'loss': 7.6992080276076855}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 3/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'local_samples': 235.0, 'train_loss': 5.017653226852417, 'train_time_max_s': 0.012260999996215105, 'train_time_s': 0.05840189993614331, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.8, 'auc': 0.8703571428571429, 'eval_time_s': 0.003644299926236272, 'f1': 0.8421784098254687, 'loss': 1.070094824830691, 'accuracy_std': 0.13540064007726602, 'accuracy_min': 0.6666666666666666, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.7972972972972973, 'f1': 0.8275862068965517, 'auc': 0.8885057471264367, 'loss': 0.6477996207572319}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 4/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'local_samples': 235.0, 'train_loss': 0.3771209848423799, 'train_time_max_s': 0.01176700001815334, 'train_time_s': 0.05641790002118796, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.75, 'auc': 0.8703571428571429, 'eval_time_s': 0.0044720000005327165, 'f1': 0.7876329552800141, 'loss': 1.6610274215539296, 'accuracy_std': 0.09128709291752769, 'accuracy_min': 0.6666666666666666, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.7432432432432432, 'f1': 0.759493670886076, 'auc': 0.8915708812260537, 'loss': 1.3803540822621938}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 5/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'local_samples': 235.0, 'train_loss': 0.6341895841682951, 'train_time_max_s': 0.011841700004879385, 'train_time_s': 0.057324200053699315, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.7, 'auc': 0.8114285714285715, 'eval_time_s': 0.005836399970576167, 'f1': 0.7981854145166839, 'loss': 1.3492086092631022, 'accuracy_std': 0.13540064007726602, 'accuracy_min': 0.5, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.7702702702702703, 'f1': 0.8349514563106796, 'auc': 0.8222222222222222, 'loss': 0.9042905859045081}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 6/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'local_samples': 235.0, 'train_loss': 0.40172305131951963, 'train_time_max_s': 0.016881100018508732, 'train_time_s': 0.07859079987974837, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.6666666666666666, 'auc': 0.71375, 'eval_time_s': 0.0033460999839007854, 'f1': 0.7510659000442282, 'loss': 1.1141485412915548, 'accuracy_std': 0.14907119849998596, 'accuracy_min': 0.5, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.5540540540540541, 'f1': 0.6857142857142857, 'auc': 0.6950191570881227, 'loss': 0.9485953047468856}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 7/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'local_samples': 235.0, 'train_loss': 0.39900267968575154, 'train_time_max_s': 0.01199939998332411, 'train_time_s': 0.05838860006770119, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.7833333333333333, 'auc': 0.8207142857142858, 'eval_time_s': 0.0036595999845303595, 'f1': 0.8147058823529412, 'loss': 0.9539722839991251, 'accuracy_std': 0.0666666666666667, 'accuracy_min': 0.6666666666666666, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.7972972972972973, 'f1': 0.810126582278481, 'auc': 0.8544061302681992, 'loss': 0.9192819337587099}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 8/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'local_samples': 235.0, 'train_loss': 0.38931251739462214, 'train_time_max_s': 0.01559079997241497, 'train_time_s': 0.0712173999636434, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.8, 'auc': 0.8292857142857143, 'eval_time_s': 0.005490200011990964, 'f1': 0.8398340874811463, 'loss': 1.4512607514858247, 'accuracy_std': 0.09999999999999999, 'accuracy_min': 0.6666666666666666, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.8108108108108109, 'f1': 0.8333333333333334, 'auc': 0.8471264367816093, 'loss': 0.8388489388130806}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 9/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'local_samples': 235.0, 'train_loss': 0.3479246747369567, 'train_time_max_s': 0.012816199974622577, 'train_time_s': 0.059952499985229224, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.7166666666666667, 'auc': 0.8167857142857143, 'eval_time_s': 0.0033872000058181584, 'f1': 0.7925396825396825, 'loss': 1.3583938042322794, 'accuracy_std': 0.12472191289246475, 'accuracy_min': 0.5, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.7162162162162162, 'f1': 0.7835051546391752, 'auc': 0.8505747126436782, 'loss': 0.6643716451284047}
+[92mINFO [0m:      
+[92mINFO [0m:      [ROUND 10/10]
+[92mINFO [0m:      configure_train: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_train: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'local_samples': 235.0, 'train_loss': 0.2973892475788792, 'train_time_max_s': 0.011565200053155422, 'train_time_s': 0.056333100073970854, 'num_clients': 5.0}
+[92mINFO [0m:      configure_evaluate: Sampled 5 nodes (out of 5)
+[92mINFO [0m:      aggregate_evaluate: Received 5 results and 0 failures
+[92mINFO [0m:      	└──> Aggregated MetricRecord: {'accuracy': 0.6833333333333333, 'auc': 0.6953571428571429, 'eval_time_s': 0.0032362000201828778, 'f1': 0.7166305916305916, 'loss': 0.9216322024663289, 'accuracy_std': 0.13333333333333336, 'accuracy_min': 0.5, 'num_clients': 5.0}
+[92mINFO [0m:      Global evaluation
+[92mINFO [0m:      	└──> MetricRecord: {'accuracy': 0.7567567567567568, 'f1': 0.7804878048780488, 'auc': 0.8160919540229884, 'loss': 0.7063315108015731}
+[92mINFO [0m:      
+[92mINFO [0m:      Strategy execution finished in 103.75s
+[92mINFO [0m:      
+[92mINFO [0m:      Final results:
+[92mINFO [0m:      
+[92mINFO [0m:      	Global Arrays:
+[92mINFO [0m:      		ArrayRecord (0.011 MB)
+[92mINFO [0m:      	
+[92mINFO [0m:      	Aggregated ClientApp-side Train Metrics:
+[92mINFO [0m:      	{ 1: { 'local_samples': '2.3500e+02',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '6.0671e-01',
+[92mINFO [0m:      	       'train_time_max_s': '7.5384e-02',
+[92mINFO [0m:      	       'train_time_s': '2.4309e-01'},
+[92mINFO [0m:      	  2: { 'local_samples': '2.3500e+02',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '7.8598e-01',
+[92mINFO [0m:      	       'train_time_max_s': '1.2791e-02',
+[92mINFO [0m:      	       'train_time_s': '5.9339e-02'},
+[92mINFO [0m:      	  3: { 'local_samples': '2.3500e+02',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '5.0177e+00',
+[92mINFO [0m:      	       'train_time_max_s': '1.2261e-02',
+[92mINFO [0m:      	       'train_time_s': '5.8402e-02'},
+[92mINFO [0m:      	  4: { 'local_samples': '2.3500e+02',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '3.7712e-01',
+[92mINFO [0m:      	       'train_time_max_s': '1.1767e-02',
+[92mINFO [0m:      	       'train_time_s': '5.6418e-02'},
+[92mINFO [0m:      	  5: { 'local_samples': '2.3500e+02',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '6.3419e-01',
+[92mINFO [0m:      	       'train_time_max_s': '1.1842e-02',
+[92mINFO [0m:      	       'train_time_s': '5.7324e-02'},
+[92mINFO [0m:      	  6: { 'local_samples': '2.3500e+02',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '4.0172e-01',
+[92mINFO [0m:      	       'train_time_max_s': '1.6881e-02',
+[92mINFO [0m:      	       'train_time_s': '7.8591e-02'},
+[92mINFO [0m:      	  7: { 'local_samples': '2.3500e+02',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '3.9900e-01',
+[92mINFO [0m:      	       'train_time_max_s': '1.1999e-02',
+[92mINFO [0m:      	       'train_time_s': '5.8389e-02'},
+[92mINFO [0m:      	  8: { 'local_samples': '2.3500e+02',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '3.8931e-01',
+[92mINFO [0m:      	       'train_time_max_s': '1.5591e-02',
+[92mINFO [0m:      	       'train_time_s': '7.1217e-02'},
+[92mINFO [0m:      	  9: { 'local_samples': '2.3500e+02',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00',
+[92mINFO [0m:      	       'train_loss': '3.4792e-01',
+[92mINFO [0m:      	       'train_time_max_s': '1.2816e-02',
+[92mINFO [0m:      	       'train_time_s': '5.9952e-02'},
+[92mINFO [0m:      	  10: { 'local_samples': '2.3500e+02',
+[92mINFO [0m:      	        'num_clients': '5.0000e+00',
+[92mINFO [0m:      	        'train_loss': '2.9739e-01',
+[92mINFO [0m:      	        'train_time_max_s': '1.1565e-02',
+[92mINFO [0m:      	        'train_time_s': '5.6333e-02'}}
+[92mINFO [0m:      	
+[92mINFO [0m:      	Aggregated ClientApp-side Evaluate Metrics:
+[92mINFO [0m:      	{ 1: { 'accuracy': '7.3333e-01',
+[92mINFO [0m:      	       'accuracy_min': '5.8333e-01',
+[92mINFO [0m:      	       'accuracy_std': '1.1055e-01',
+[92mINFO [0m:      	       'auc': '8.5554e-01',
+[92mINFO [0m:      	       'eval_time_s': '6.7825e-03',
+[92mINFO [0m:      	       'f1': '7.7811e-01',
+[92mINFO [0m:      	       'loss': '1.5622e+00',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  2: { 'accuracy': '2.5000e-01',
+[92mINFO [0m:      	       'accuracy_min': '0.0000e+00',
+[92mINFO [0m:      	       'accuracy_std': '1.3944e-01',
+[92mINFO [0m:      	       'auc': '2.1000e-01',
+[92mINFO [0m:      	       'eval_time_s': '3.6772e-03',
+[92mINFO [0m:      	       'f1': '2.8093e-01',
+[92mINFO [0m:      	       'loss': '8.3727e+00',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  3: { 'accuracy': '8.0000e-01',
+[92mINFO [0m:      	       'accuracy_min': '6.6667e-01',
+[92mINFO [0m:      	       'accuracy_std': '1.3540e-01',
+[92mINFO [0m:      	       'auc': '8.7036e-01',
+[92mINFO [0m:      	       'eval_time_s': '3.6443e-03',
+[92mINFO [0m:      	       'f1': '8.4218e-01',
+[92mINFO [0m:      	       'loss': '1.0701e+00',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  4: { 'accuracy': '7.5000e-01',
+[92mINFO [0m:      	       'accuracy_min': '6.6667e-01',
+[92mINFO [0m:      	       'accuracy_std': '9.1287e-02',
+[92mINFO [0m:      	       'auc': '8.7036e-01',
+[92mINFO [0m:      	       'eval_time_s': '4.4720e-03',
+[92mINFO [0m:      	       'f1': '7.8763e-01',
+[92mINFO [0m:      	       'loss': '1.6610e+00',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  5: { 'accuracy': '7.0000e-01',
+[92mINFO [0m:      	       'accuracy_min': '5.0000e-01',
+[92mINFO [0m:      	       'accuracy_std': '1.3540e-01',
+[92mINFO [0m:      	       'auc': '8.1143e-01',
+[92mINFO [0m:      	       'eval_time_s': '5.8364e-03',
+[92mINFO [0m:      	       'f1': '7.9819e-01',
+[92mINFO [0m:      	       'loss': '1.3492e+00',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  6: { 'accuracy': '6.6667e-01',
+[92mINFO [0m:      	       'accuracy_min': '5.0000e-01',
+[92mINFO [0m:      	       'accuracy_std': '1.4907e-01',
+[92mINFO [0m:      	       'auc': '7.1375e-01',
+[92mINFO [0m:      	       'eval_time_s': '3.3461e-03',
+[92mINFO [0m:      	       'f1': '7.5107e-01',
+[92mINFO [0m:      	       'loss': '1.1141e+00',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  7: { 'accuracy': '7.8333e-01',
+[92mINFO [0m:      	       'accuracy_min': '6.6667e-01',
+[92mINFO [0m:      	       'accuracy_std': '6.6667e-02',
+[92mINFO [0m:      	       'auc': '8.2071e-01',
+[92mINFO [0m:      	       'eval_time_s': '3.6596e-03',
+[92mINFO [0m:      	       'f1': '8.1471e-01',
+[92mINFO [0m:      	       'loss': '9.5397e-01',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  8: { 'accuracy': '8.0000e-01',
+[92mINFO [0m:      	       'accuracy_min': '6.6667e-01',
+[92mINFO [0m:      	       'accuracy_std': '1.0000e-01',
+[92mINFO [0m:      	       'auc': '8.2929e-01',
+[92mINFO [0m:      	       'eval_time_s': '5.4902e-03',
+[92mINFO [0m:      	       'f1': '8.3983e-01',
+[92mINFO [0m:      	       'loss': '1.4513e+00',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  9: { 'accuracy': '7.1667e-01',
+[92mINFO [0m:      	       'accuracy_min': '5.0000e-01',
+[92mINFO [0m:      	       'accuracy_std': '1.2472e-01',
+[92mINFO [0m:      	       'auc': '8.1679e-01',
+[92mINFO [0m:      	       'eval_time_s': '3.3872e-03',
+[92mINFO [0m:      	       'f1': '7.9254e-01',
+[92mINFO [0m:      	       'loss': '1.3584e+00',
+[92mINFO [0m:      	       'num_clients': '5.0000e+00'},
+[92mINFO [0m:      	  10: { 'accuracy': '6.8333e-01',
+[92mINFO [0m:      	        'accuracy_min': '5.0000e-01',
+[92mINFO [0m:      	        'accuracy_std': '1.3333e-01',
+[92mINFO [0m:      	        'auc': '6.9536e-01',
+[92mINFO [0m:      	        'eval_time_s': '3.2362e-03',
+[92mINFO [0m:      	        'f1': '7.1663e-01',
+[92mINFO [0m:      	        'loss': '9.2163e-01',
+[92mINFO [0m:      	        'num_clients': '5.0000e+00'}}
+[92mINFO [0m:      	
+[92mINFO [0m:      	ServerApp-side Evaluate Metrics:
+[92mINFO [0m:      	{ 0: { 'accuracy': '6.0811e-01',
+[92mINFO [0m:      	       'auc': '5.0728e-01',
+[92mINFO [0m:      	       'f1': '7.5630e-01',
+[92mINFO [0m:      	       'loss': '6.7540e-01'},
+[92mINFO [0m:      	  1: { 'accuracy': '7.5676e-01',
+[92mINFO [0m:      	       'auc': '8.5019e-01',
+[92mINFO [0m:      	       'f1': '7.6923e-01',
+[92mINFO [0m:      	       'loss': '1.8020e+00'},
+[92mINFO [0m:      	  2: { 'accuracy': '2.7027e-01',
+[92mINFO [0m:      	       'auc': '1.2874e-01',
+[92mINFO [0m:      	       'f1': '4.1304e-01',
+[92mINFO [0m:      	       'loss': '7.6992e+00'},
+[92mINFO [0m:      	  3: { 'accuracy': '7.9730e-01',
+[92mINFO [0m:      	       'auc': '8.8851e-01',
+[92mINFO [0m:      	       'f1': '8.2759e-01',
+[92mINFO [0m:      	       'loss': '6.4780e-01'},
+[92mINFO [0m:      	  4: { 'accuracy': '7.4324e-01',
+[92mINFO [0m:      	       'auc': '8.9157e-01',
+[92mINFO [0m:      	       'f1': '7.5949e-01',
+[92mINFO [0m:      	       'loss': '1.3804e+00'},
+[92mINFO [0m:      	  5: { 'accuracy': '7.7027e-01',
+[92mINFO [0m:      	       'auc': '8.2222e-01',
+[92mINFO [0m:      	       'f1': '8.3495e-01',
+[92mINFO [0m:      	       'loss': '9.0429e-01'},
+[92mINFO [0m:      	  6: { 'accuracy': '5.5405e-01',
+[92mINFO [0m:      	       'auc': '6.9502e-01',
+[92mINFO [0m:      	       'f1': '6.8571e-01',
+[92mINFO [0m:      	       'loss': '9.4860e-01'},
+[92mINFO [0m:      	  7: { 'accuracy': '7.9730e-01',
+[92mINFO [0m:      	       'auc': '8.5441e-01',
+[92mINFO [0m:      	       'f1': '8.1013e-01',
+[92mINFO [0m:      	       'loss': '9.1928e-01'},
+[92mINFO [0m:      	  8: { 'accuracy': '8.1081e-01',
+[92mINFO [0m:      	       'auc': '8.4713e-01',
+[92mINFO [0m:      	       'f1': '8.3333e-01',
+[92mINFO [0m:      	       'loss': '8.3885e-01'},
+[92mINFO [0m:      	  9: { 'accuracy': '7.1622e-01',
+[92mINFO [0m:      	       'auc': '8.5057e-01',
+[92mINFO [0m:      	       'f1': '7.8351e-01',
+[92mINFO [0m:      	       'loss': '6.6437e-01'},
+[92mINFO [0m:      	  10: { 'accuracy': '7.5676e-01',
+[92mINFO [0m:      	        'auc': '8.1609e-01',
+[92mINFO [0m:      	        'f1': '7.8049e-01',
+[92mINFO [0m:      	        'loss': '7.0633e-01'}}
+[92mINFO [0m:      
+
+>>> FedAdam / iid: acuracia 0.7568 | F1 0.7805 | AUC 0.8161 | treino efetivo 0.80s | wall-clock 103.76s
+
+[36m(ClientAppActor pid=20072)[0m [93mWARNING [0m:   Manually terminating ClientAppActor
+[33m(raylet)[0m Stack (most recent call first):[32m [repeated 4x across cluster] (Ray deduplicates logs by default. Set RAY_DEDUP_LOGS=0 to disable log deduplication, or see https://docs.ray.io/en/master/ray-observability/user-guides/configure-logging.html#log-deduplication for more options.)[0m
+[33m(raylet)[0m   File "C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py", line 628 in job_logging_config[32m [repeated 5x across cluster][0m
+[33m(raylet)[0m   File "C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py", line 2801 in disconnect[32m [repeated 5x across cluster][0m
+[33m(raylet)[0m   File "C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\worker.py", line 2132 in shutdown[32m [repeated 5x across cluster][0m
+[33m(raylet)[0m access violation
+[33m(raylet)[0m   File "C:\Users\nalva\.flwr\runtime-envs\13676661591441627548\Lib\site-packages\ray\_private\client_mode_hook.py", line 107 in wrapper[32m [repeated 13x across cluster][0m
+[36m(ClientAppActor pid=24984)[0m [93mWARNING [0m:   Manually terminating ClientAppActor[32m [repeated 3x across cluster][0m
+[92mINFO [0m:      

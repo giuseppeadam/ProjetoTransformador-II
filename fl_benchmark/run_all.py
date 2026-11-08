@@ -21,6 +21,7 @@ import os
 import subprocess
 import sys
 import time
+import tomllib
 from pathlib import Path
 
 from fl_benchmark import report, strategies
@@ -44,6 +45,12 @@ COLUNAS_HISTORICO = (
     "rounds",
     "dataset",
 )
+
+
+def _dataset_padrao() -> str:
+    """Dataset configurado no pyproject.toml, usado quando --dataset é omitido."""
+    with (AQUI / "pyproject.toml").open("rb") as arquivo:
+        return str(tomllib.load(arquivo)["tool"]["flwr"]["app"]["config"]["dataset"])
 
 
 def registrar_tempo(log_dir: Path, linha: dict) -> None:
@@ -120,7 +127,12 @@ def executar(
     log_dir.mkdir(parents=True, exist_ok=True)
     destino_log = log_dir / f"{estrategia}_{particao}_seed{seed}.log"
 
-    artefato = report.results_dir() / f"{estrategia}_{particao}_seed{seed}.json"
+    # O servidor grava em `results/<dataset>/` (ver `report.dataset_dir`).
+    # Conferir em `results/` acusaria falha mesmo com a execução concluída.
+    artefato = (
+        report.dataset_dir(dataset or _dataset_padrao())
+        / f"{estrategia}_{particao}_seed{seed}.json"
+    )
     marca_anterior = artefato.stat().st_mtime if artefato.is_file() else None
 
     print(f"[{estrategia} / {particao} / seed {seed}] iniciando", flush=True)

@@ -1,0 +1,6 @@
+# O Flower empacota esta pasta inteira a cada `flwr run` e respeita este
+# arquivo. Ambientes virtuais aqui dentro precisam ficar de fora, ou o pacote
+# estoura o limite de profundidade de diretórios do Flower.
+.venv*/
+venv/
+__pycache__/

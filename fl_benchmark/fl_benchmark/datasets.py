@@ -6,6 +6,7 @@ nenhum código de estratégia, partição ou métrica precisa mudar.
 """
 
 import os
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -89,6 +90,13 @@ class DatasetSpec:
     # Coluna contínua é binarizada pela mediana, o que garante classes
     # equilibradas sem escolher um limiar arbitrário.
     binarize_by_median: bool = True
+    # Alternativa à mediana para alvos ordinais (escala Likert): positivo quando
+    # `alvo >= positive_threshold`. Numa escala de 4 níveis, "> mediana" pode
+    # deixar as classes muito desequilibradas, então o corte é explícito.
+    positive_threshold: float | None = None
+    # Limpeza específica do dataset, aplicada ao DataFrame bruto antes de
+    # separar treino e teste (descartar linhas inválidas, duplicatas, etc.).
+    preprocess: Callable[[pd.DataFrame], pd.DataFrame] | None = None
     description: str = ""
     notes: list[str] = field(default_factory=list)
 
@@ -170,9 +178,88 @@ PISA = DatasetSpec(
     ],
 )
 
+def _limpar_social_media(df: pd.DataFrame) -> pd.DataFrame:
+    """Limpeza do Social Media Impact on Students.
+
+    1. As 9 linhas com `UsageLimitation_missing == 1` não são respostas: em 6
+       delas o campo contém o texto da própria pergunta ("Q15. How often...")
+       — cabeçalho do formulário colado como resposta — e nas outras 3 está
+       vazio. O valor numérico que aparece ali é imputado, não observado.
+    2. 1.130 das 1.501 linhas são cópias exatas de outras (o formulário foi
+       exportado com respostas repetidas). Sem deduplicar, a mesma resposta
+       cai no treino e no teste, e a acurácia medida passa a ser memorização.
+       Restam 369 respondentes distintos.
+    """
+    df = df[df["UsageLimitation_missing"] == 0]
+    return df.drop(columns="UsageLimitation_missing").drop_duplicates().reset_index(drop=True)
+
+
+SOCIAL_MEDIA = DatasetSpec(
+    name="social_media",
+    csv_filename="Social_Media_Impact_OnStudents_numeric.csv",
+    features=[
+        # Perfil
+        "AgeGroup",
+        "Gender_Female",
+        "Gender_Male",
+        "Gender_Other",
+        # Intensidade e padrão de uso
+        "SocialMediaHours",
+        "UsageDuringStudy",
+        "CheckingDuringStudy",
+        "NotificationDisruption",
+        "Multitasking",
+        "UsageLimitation",
+        "BreakFrequency",
+        # Sintomas de uso problemático
+        "FocusReduction",
+        "Procrastination",
+        "CourseworkDistraction",
+        "TimeManagementDifficulty",
+        "TimeLost",
+        "StudyDelay",
+        # Plataforma mais usada (one-hot)
+        "MostUsedPlatform_Facebook",
+        "MostUsedPlatform_Instagram",
+        "MostUsedPlatform_LinkedIn",
+        "MostUsedPlatform_Others",
+        "MostUsedPlatform_Snapchat",
+        "MostUsedPlatform_TikTok",
+        "MostUsedPlatform_Twitter",
+        "MostUsedPlatform_YouTube",
+    ],
+    target_column="ProductivityImpact",
+    binarize_by_median=False,
+    # 0 Not at all · 1 Slightly · 2 Moderately · 3 Significantly.
+    # Positivo = impacto moderado ou significativo (223 de 369, 60%).
+    positive_threshold=2.0,
+    preprocess=_limpar_social_media,
+    # Faixa etária como unidade federada no regime natural (3 clientes).
+    group_column="AgeGroup",
+    description=(
+        "Questionário sobre uso de redes sociais por estudantes (369 respondentes "
+        "distintos, 25 features ordinais/one-hot). Alvo: impacto da rede social na "
+        "produtividade moderado ou significativo."
+    ),
+    notes=[
+        "O CSV original tem 1.501 linhas, mas 1.130 são duplicatas exatas e 9 são "
+        "linhas inválidas (texto da pergunta no lugar da resposta). Após a limpeza "
+        "restam 369 amostras — cerca de 59 por cliente com 5 clientes.",
+        "`AcademicImpact` e `ProductivityWithoutSM` ficaram fora das features: são "
+        "autoavaliações de consequência, da mesma natureza do alvo, e funcionariam "
+        "como vazamento parcial da resposta.",
+        "Diferente do `productivity`, o alvo não é derivado das features: uma "
+        "regressão linear explica R² ≈ 0,56. O teto de acurácia fica bem abaixo de "
+        "100%, e os alvos de convergência devem ser lidos relativos ao baseline.",
+        "No regime natural cada faixa etária (<18, 18–24, 25–34) é um cliente: "
+        "partições de tamanho bem diferente, heterogeneidade real.",
+    ],
+)
+
 DATASETS: dict[str, DatasetSpec] = {
     PRODUCTIVITY.name: PRODUCTIVITY,
     PISA.name: PISA,
+    SOCIAL_MEDIA.name: SOCIAL_MEDIA,
 }
 
 # Cache em nível de módulo: numa simulação os clientes compartilham o processo,
@@ -206,21 +293,34 @@ def load(name: str) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         return _CACHE[name]
 
     df = pd.read_csv(resolve_csv(spec.csv_filename))
+    if spec.preprocess is not None:
+        df = spec.preprocess(df)
 
-    faltando = [c for c in [*spec.features, spec.target_column] if c not in df.columns]
+    obrigatorias = [*spec.features, spec.target_column]
+    if spec.group_column:
+        obrigatorias.append(spec.group_column)
+    faltando = [c for c in obrigatorias if c not in df.columns]
     if faltando:
         raise ValueError(f"colunas ausentes no CSV de {name!r}: {faltando}")
+    if df[obrigatorias].isna().any().any():
+        raise ValueError(f"valores nulos nas colunas usadas de {name!r}; trate em `preprocess`")
 
     X = df[spec.features].to_numpy(dtype=np.float32)
     bruto = df[spec.target_column].to_numpy(dtype=np.float64)
-    if spec.binarize_by_median:
+    if spec.positive_threshold is not None:
+        y = (bruto >= spec.positive_threshold).astype(np.float32)
+    elif spec.binarize_by_median:
         y = (bruto > np.median(bruto)).astype(np.float32)
     else:
         y = bruto.astype(np.float32)
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=TEST_SIZE, random_state=SEED, stratify=y
+    # Os rótulos de grupo seguem as linhas no split, para o regime natural.
+    grupos = df[spec.group_column].to_numpy() if spec.group_column else np.zeros(len(df))
+    X_train, X_test, y_train, y_test, g_train, _ = train_test_split(
+        X, y, grupos, test_size=TEST_SIZE, random_state=SEED, stratify=y
     )
+    if spec.group_column:
+        _GRUPOS[name] = g_train
 
     scaler = StandardScaler().fit(X_train)
     X_train = scaler.transform(X_train).astype(np.float32)
