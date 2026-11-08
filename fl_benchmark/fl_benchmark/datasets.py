@@ -249,7 +249,7 @@ SOCIAL_MEDIA = DatasetSpec(
         "autoavaliações de consequência, da mesma natureza do alvo, e funcionariam "
         "como vazamento parcial da resposta.",
         "Diferente do `productivity`, o alvo não é derivado das features: uma "
-        "regressão linear explica R² ≈ 0,56. O teto de acurácia fica bem abaixo de "
+        "regressão linear explica R² ≈ 0,54. O teto de acurácia fica bem abaixo de "
         "100%, e os alvos de convergência devem ser lidos relativos ao baseline.",
         "No regime natural cada faixa etária (<18, 18–24, 25–34) é um cliente: "
         "partições de tamanho bem diferente, heterogeneidade real.",

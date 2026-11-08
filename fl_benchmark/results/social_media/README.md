@@ -79,7 +79,7 @@ As combinações a seguir ainda não foram executadas e aparecem como linha vazi
 
 - O CSV original tem 1.501 linhas, mas 1.130 são duplicatas exatas e 9 são linhas inválidas (texto da pergunta no lugar da resposta). Após a limpeza restam 369 amostras — cerca de 59 por cliente com 5 clientes.
 - `AcademicImpact` e `ProductivityWithoutSM` ficaram fora das features: são autoavaliações de consequência, da mesma natureza do alvo, e funcionariam como vazamento parcial da resposta.
-- Diferente do `productivity`, o alvo não é derivado das features: uma regressão linear explica R² ≈ 0,56. O teto de acurácia fica bem abaixo de 100%, e os alvos de convergência devem ser lidos relativos ao baseline.
+- Diferente do `productivity`, o alvo não é derivado das features: uma regressão linear explica R² ≈ 0,54. O teto de acurácia fica bem abaixo de 100%, e os alvos de convergência devem ser lidos relativos ao baseline.
 - No regime natural cada faixa etária (<18, 18–24, 25–34) é um cliente: partições de tamanho bem diferente, heterogeneidade real.
 
 ## Sensibilidade ao alvo de convergência
